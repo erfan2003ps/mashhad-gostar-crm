@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('mg-theme');
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', dark);
+        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+      } catch (e) {}
+    })();
+  </script>
   <meta name="theme-color" content="#F5F2EB" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#090A0F" media="(prefers-color-scheme: dark)" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -575,7 +585,71 @@
       form button, .app-modal button { min-height: 44px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .animate-view, .modal-spring, .holo-shimmer::after { animation: none !important; }
+      .animate-view, .modal-spring, .holo-shimmer::after, .mg-enter, .mg-ticker-track, .mg-fab-menu { animation: none !important; transition: none !important; }
+    }
+    html { color-scheme: light; }
+    html.dark { color-scheme: dark; }
+    html.dark body { background-color: #090A0F; color: #F4F3EF; }
+    html:not(.dark) body { background-color: #F5F2EB; color: #18181B; }
+    #invoice-a5-paper, #invoice-a5-paper * { color: #18181b; }
+    @keyframes mgPage {
+      from { opacity: 0; transform: translateY(22px) scale(0.985); filter: blur(8px); }
+      to { opacity: 1; transform: none; filter: none; }
+    }
+    .tab-section.mg-enter { animation: mgPage 0.46s cubic-bezier(0.16, 1, 0.3, 1); }
+    .mg-duebar { height: 5px; border-radius: 99px; background: rgba(120,113,108,.18); overflow: hidden; }
+    .mg-duebar > span { display: block; height: 100%; border-radius: 99px; transition: width .4s ease; }
+    .mg-hub-btn, .nav-tab-btn, #mg-fab button { transition: transform .22s cubic-bezier(.16,1,.3,1), background-color .2s, color .2s, box-shadow .2s; }
+    .mg-hub-btn:active, .nav-tab-btn:active, #mg-fab button:active { transform: scale(.94); }
+    .mg-hub-pane { animation: viewEntrance .32s cubic-bezier(.16,1,.3,1); }
+    .mg-avatar-wrap { position: relative; display: inline-flex; border-radius: 999px; padding: 2px; background: #94a3b8; }
+    .mg-avatar-wrap.online { background: #10b981; box-shadow: 0 0 0 2px rgba(16,185,129,.25); }
+    .mg-avatar-wrap.busy { background: #f59e0b; box-shadow: 0 0 0 2px rgba(245,158,11,.25); }
+    .mg-avatar-wrap.leave { background: #94a3b8; }
+    .mg-avatar-wrap > * { border-radius: 999px; }
+    .mg-mention, #mg-cmd, #hold-modal .modal-spring, #mg-undo {
+      background: var(--bg-glass-strong);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+    }
+    #mg-mention { position: fixed; z-index: 240; max-height: 240px; overflow: auto; border-radius: 18px; border: 1px solid var(--border-gold); box-shadow: var(--shadow-glass); padding: 6px; }
+    #mg-cmd { z-index: 240; }
+    #mg-undo { z-index: 260; left: 12px; right: 12px; bottom: calc(96px + env(safe-area-inset-bottom)); }
+    @media (min-width: 1024px) { #mg-undo { left: auto; right: 24px; width: min(440px, 40vw); bottom: 24px; } }
+    .mg-ticker { overflow: hidden; }
+    .mg-ticker-track { display: flex; gap: 22px; width: max-content; animation: mgMarquee 36s linear infinite; }
+    @keyframes mgMarquee { from { transform: translateX(8%); } to { transform: translateX(-50%); } }
+    .mg-tick { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 12px; font-weight: 800; }
+    .mg-tick i { width: 8px; height: 8px; border-radius: 99px; display: inline-block; }
+    #mg-fab { position: fixed; z-index: 45; left: 16px; bottom: calc(92px + env(safe-area-inset-bottom)); }
+    #mg-fab-main { width: 58px; height: 58px; border-radius: 999px; font-size: 32px; line-height: 1; box-shadow: 0 12px 30px rgba(197,160,89,.45); }
+    .mg-fab-menu { position: absolute; bottom: 68px; left: 0; display: flex; flex-direction: column; gap: 8px; transform-origin: bottom left; }
+    .mg-fab-menu button { min-height: 44px; border-radius: 16px; padding: 8px 12px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+    #mg-fab.is-open .mg-fab-menu { animation: mgFan .28s cubic-bezier(.16,1,.3,1); }
+    @keyframes mgFan { from { opacity: 0; transform: translateY(10px) scale(.9); } to { opacity: 1; transform: none; } }
+    .mg-task-btn { font-size: 11px; font-weight: 800; border-radius: 999px; padding: 2px 8px; background: rgba(197,160,89,.2); }
+    .mg-card-chip { border: 1px solid var(--border-gold); border-radius: 16px; padding: 8px 10px; margin-top: 6px; background: rgba(197,160,89,.08); }
+    #hold-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 900px) { #hold-grid { grid-template-columns: 1.1fr .9fr 1fr; } }
+    @media (max-width: 1023px) {
+      #app-header h1 { font-size: 0 !important; }
+      #app-header h1::after { content: 'مشهد گستر'; font-size: 16px; font-weight: 900; }
+      #btn-toggle-3d, #v5-today-ticker, #btn-top-excel, #btn-hold-mode, #btn-n8n-sync-now, #app-header .vs-spring-toggle { display: none !important; }
+      #btn-open-search { min-width: 40px; padding-left: 8px; padding-right: 8px; }
+      #btn-logout-user .mg-hide-sm, #btn-logout-user span:not(#current-user-badge) { display: none !important; }
+      #current-user-badge { max-width: 5.5rem; }
+      #app-search { display: none; }
+      #app-header-actions { flex: 0 0 auto !important; justify-content: flex-end !important; gap: 6px !important; }
+      #app-brand { flex: 1 1 auto; }
+      .mg-page { min-height: calc(100dvh - 168px); }
+      #mg-fab { z-index: 55; }
+      #mg-fab .mg-fab-menu { z-index: 56; }
+      #mg-fab .mg-fab-menu button {
+        background: var(--bg-glass-strong);
+        border: 1px solid var(--border-gold);
+        box-shadow: var(--shadow-glass);
+        color: var(--text-main);
+      }
     }
     @media print {
       #mg-mobile-shell, #mg-tabbar { display: none !important; }
@@ -633,9 +707,12 @@
 
       <!-- Desktop Glass Navigation Tabs (5 Complete Modules) -->
       <nav class="hidden lg:flex items-center bg-cream-200/60 dark:bg-zinc-900/80 p-1.5 rounded-2xl border border-gold-500/25 gap-1">
-        <button data-tab="radar" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5">
+        <button data-tab="home" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5">
+          <span>خانه</span>
+        </button>
+        <button data-tab="radar" class="nav-tab-btn hidden mg-admin-only px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-          <span>رادار و آلارم‌های امروز</span>
+          <span>گزارش مدیر</span>
         </button>
         <button data-tab="club" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
@@ -674,6 +751,8 @@
           <span class="sm:hidden">اکسل</span>
         </button>
         <button id="btn-toggle-3d" title="فعال/غیرفعال کردن موتور سه‌بعدی" class="p-2.5 rounded-xl bg-cream-200/80 dark:bg-zinc-800 text-xs font-black gold-gradient text-zinc-950 transition">3D</button>
+        <button id="btn-hold-mode" type="button" title="حالت پشت خط مشتری" class="px-3 py-2 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-black">پشت خط</button>
+        <button id="btn-open-search" type="button" title="جستجو (Ctrl+K)" class="p-2.5 rounded-xl bg-cream-200/80 dark:bg-zinc-800 text-xs font-black">جستجو</button>
         <button id="btn-toggle-theme" title="تغییر تم شیشه‌ای روشن / تیره لوکس" class="p-2.5 rounded-xl bg-cream-200/80 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:bg-gold-500/20 transition">
           <svg class="w-5 h-5 hidden dark:block text-gold-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
           <svg class="w-5 h-5 block dark:hidden text-zinc-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -706,13 +785,86 @@
       </div>
     </div>
 
+    <section id="view-home" class="tab-section hidden mg-page space-y-4">
+      <div class="glass-panel rounded-3xl p-4 sm:p-5">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <p class="text-xs font-bold text-gold-700 dark:text-gold-300">وب‌اپ مشهد گستر</p>
+            <h2 class="text-lg font-black">کارهای امروز</h2>
+          </div>
+          <div class="text-left">
+            <p id="home-date" class="text-xs font-black"></p>
+            <button type="button" id="btn-home-reports" class="hidden mg-admin-only mt-1 px-3 py-1.5 rounded-xl gold-gradient text-zinc-950 text-xs font-black">گزارش مدیر</button>
+          </div>
+        </div>
+        <div id="home-today" class="mt-3 flex gap-2 overflow-x-auto pb-1"></div>
+      </div>
+
+      <div class="glass-panel rounded-3xl p-4 sm:p-5 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-base font-black">مرکز پیگیری</h3>
+          <span class="text-xs text-zinc-500">بی‌پاسخ، پرونده و ثبت پیگیری</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button type="button" data-hub="follow" class="mg-hub-btn px-3 py-3 rounded-2xl text-xs font-black min-h-[48px]">پیگیری‌ها</button>
+          <button type="button" data-hub="book" class="mg-hub-btn px-3 py-3 rounded-2xl text-xs font-black min-h-[48px]">دفترچه تلفن</button>
+          <button type="button" data-hub="new" class="mg-hub-btn px-3 py-3 rounded-2xl text-xs font-black min-h-[48px]">ثبت پیگیری</button>
+          <button type="button" data-hub="file" class="mg-hub-btn px-3 py-3 rounded-2xl text-xs font-black min-h-[48px]">پرونده‌ها</button>
+        </div>
+        <div id="hub-follow" class="mg-hub-pane space-y-2">
+          <div id="hub-alarms" class="space-y-2 max-h-[28rem] overflow-y-auto"></div>
+        </div>
+        <div id="hub-book" class="mg-hub-pane hidden space-y-2">
+          <form id="hub-mc-form" class="grid grid-cols-1 sm:grid-cols-3 gap-2" novalidate>
+            <input id="hub-mc-phone" type="tel" dir="ltr" required placeholder="شماره" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-black text-right" />
+            <input id="hub-mc-title" required placeholder="نام یا موضوع" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold" />
+            <button type="submit" class="px-3 py-2 rounded-xl gold-gradient text-zinc-950 font-black min-h-[44px]">ثبت در دفترچه</button>
+          </form>
+          <div id="hub-missed-list" class="space-y-2 max-h-80 overflow-y-auto"></div>
+          <div id="hub-mc-done"></div>
+        </div>
+        <div id="hub-new" class="mg-hub-pane hidden">
+          <form id="hub-fu-form" class="grid grid-cols-1 sm:grid-cols-2 gap-2" novalidate>
+            <input id="hub-fu-name" required placeholder="نام مشتری" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold" />
+            <input id="hub-fu-phone" type="tel" dir="ltr" required placeholder="شماره تماس" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-black text-right" />
+            <input id="hub-fu-title" required placeholder="موضوع پیگیری" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold sm:col-span-2" />
+            <input id="hub-fu-amount" inputmode="numeric" placeholder="مبلغ، اگر معلوم است" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold" />
+            <button type="submit" class="px-3 py-2 rounded-xl emerald-gradient text-white font-black min-h-[48px]">ثبت در قیف و پیگیری</button>
+          </form>
+        </div>
+        <div id="hub-file" class="mg-hub-pane hidden space-y-2">
+          <input id="hub-file-q" placeholder="جستجوی پرونده مشتری" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold" />
+          <div id="hub-files" class="space-y-2 max-h-80 overflow-y-auto"></div>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-3xl p-4 sm:p-5 space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-black">گپ تیمی</h3>
+          <button type="button" data-tab="work" class="nav-tab-btn text-xs font-black text-gold-700 dark:text-gold-300">گفتگوی کامل</button>
+        </div>
+        <div id="home-chat-msgs" class="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1"></div>
+        <div class="flex items-center gap-2">
+          <input id="home-chat-txt" class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold" placeholder="پیام بنویسید، برای پرونده # بزنید" enterkeyhint="send" />
+          <button id="home-chat-send" type="button" class="px-4 py-2 rounded-xl gold-gradient text-zinc-950 font-black min-h-[44px]">ارسال</button>
+        </div>
+      </div>
+    </section>
+
     <!-- ===================================================== -->
     <!-- TAB 1: EXECUTIVE RADAR & DASHBOARD (رادار و داشبورد)   -->
     <!-- ===================================================== -->
-    <section id="view-radar" class="tab-section animate-view space-y-6">
+    <section id="view-radar" class="tab-section hidden animate-view mg-page space-y-6">
+      <div class="mg-ticker glass-panel rounded-2xl px-3 py-2">
+        <div id="mg-ticker-track" class="mg-ticker-track"></div>
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-base font-black">رادار پیگیری</h2>
+        <button type="button" id="btn-hold-radar" class="px-3 py-2 rounded-xl emerald-gradient text-white text-xs font-black min-h-[44px]">حالت پشت خط مشتری</button>
+      </div>
       
-      <!-- 4 Glass KPI Cards -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
+      <!-- 4 Glass KPI Cards (مدیر) -->
+      <div id="radar-reports" class="hidden mg-admin-only grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
         <div class="glass-panel rounded-3xl p-4 sm:p-5">
           <div class="flex items-start justify-between">
             <div>
@@ -844,7 +996,7 @@
       </div>
 
       <!-- 4 Executive CRM & Loyalty Charts -->
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+      <div class="hidden mg-admin-only grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
         <div class="glass-panel rounded-3xl p-5">
           <h4 class="text-sm font-extrabold mb-1">قیف فروش و مراحل معاملات</h4>
           <p class="text-[11px] text-zinc-500 mb-3">تعداد پرونده‌ها در هر مرحله از قیف</p>
@@ -1578,9 +1730,9 @@
   <!-- ===================================================== -->
   <nav id="mg-tabbar" class="lg:hidden" aria-label="ناوبری اصلی">
     <div class="mg-tabbar-inner glass-strong">
-      <button data-tab="radar" class="nav-tab-btn" type="button">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5m0 14h16M8 16v-5m4 5V8m4 8v-3"/></svg>
-        <span>رادار</span>
+      <button data-tab="home" class="nav-tab-btn" type="button">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10.5L12 4l8 6.5V20a1 1 0 01-1 1h-5v-6H10v6H5a1 1 0 01-1-1v-9.5z"/></svg>
+        <span>خانه</span>
       </button>
       <button data-tab="club" class="nav-tab-btn" type="button">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l2.2 4.6L19 8.2l-3.5 3.4.8 4.9L12 14.8 7.7 16.5l.8-4.9L5 8.2l4.8-.6L12 3z"/></svg>
@@ -1596,15 +1748,19 @@
       </button>
       <button data-tab="work" class="nav-tab-btn" type="button">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M6 18l-2 3V6a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H6z"/></svg>
-        <span>کار</span>
+        <span>گپ</span>
         <b class="ws-nb hidden px-1 rounded-full bg-rose-600 text-white"></b>
-      </button>
-      <button data-tab="automation" class="nav-tab-btn" type="button">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m-4-4h8M4 7h16v10H4z"/></svg>
-        <span>ابزار</span>
       </button>
     </div>
   </nav>
+  <div id="mg-fab" class="lg:hidden">
+    <div class="mg-fab-menu hidden">
+      <button type="button" data-fab="missed" class="glass-strong">ثبت تماس بی‌پاسخ</button>
+      <button type="button" data-fab="quote" class="glass-strong">استعلام قیمت سریع</button>
+      <button type="button" data-fab="hold" class="glass-strong">پشت خط مشتری</button>
+    </div>
+    <button id="mg-fab-main" type="button" class="gold-gradient text-zinc-950 font-black" aria-label="میانبرها">+</button>
+  </div>
 
   <!-- ===================================================== -->
   <!-- MODAL 1: RECORD PURCHASE / ADD LOYALTY POINTS         -->
@@ -1830,10 +1986,11 @@
       </div>
 
       <!-- Segmented 3 Tabs inside Customer Dossier -->
-      <div class="grid grid-cols-3 gap-2 bg-cream-200/70 dark:bg-zinc-900 p-1.5 rounded-2xl border border-gold-500/25">
-        <button type="button" data-cdm-tab="stages" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-black gold-gradient text-zinc-950">۱. پیگیری‌ها و مراحل قیف فروش</button>
-        <button type="button" data-cdm-tab="invoices" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300">۲. بایگانی فاکتورهای مشتری</button>
-        <button type="button" data-cdm-tab="chats" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300">۳. تاریخچه مکالمات و رویدادها</button>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-cream-200/70 dark:bg-zinc-900 p-1.5 rounded-2xl border border-gold-500/25">
+        <button type="button" data-cdm-tab="stages" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-black gold-gradient text-zinc-950">پیگیری</button>
+        <button type="button" data-cdm-tab="invoices" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300">فاکتور</button>
+        <button type="button" data-cdm-tab="chats" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300">گفتگو</button>
+        <button type="button" data-cdm-tab="gear" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300">گارانتی</button>
       </div>
 
       <div id="cdm-panel-stages" class="space-y-3 max-h-96 overflow-y-auto pr-1"></div>
@@ -1845,7 +2002,56 @@
         </div>
         <div id="cdm-chats-list" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
       </div>
+      <div id="cdm-panel-gear" class="hidden space-y-3 max-h-96 overflow-y-auto pr-1"></div>
     </div>
+  </div>
+
+  <div id="hold-modal" class="app-modal fixed inset-0 z-[160] bg-zinc-950/70 backdrop-blur-xl hidden items-center justify-center p-3 overflow-y-auto">
+    <div class="modal-spring glass-strong rounded-3xl w-full max-w-5xl p-4 sm:p-6 border-2 border-gold-500/50 space-y-4 my-auto">
+      <div class="flex items-center justify-between gap-2">
+        <div>
+          <p class="text-xs font-black text-emerald-600 dark:text-emerald-300">حالت پشت خط مشتری</p>
+          <h3 class="text-lg font-black">مکالمه زنده</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="hold-timer" class="px-3 py-1.5 rounded-xl bg-zinc-900 text-gold-400 font-black text-sm">۰۰:۰۰</span>
+          <button type="button" id="btn-hold-close" class="px-3 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-xs font-bold">بستن</button>
+        </div>
+      </div>
+      <div id="hold-grid">
+        <div class="space-y-2">
+          <label class="text-xs font-black">مشتری یا شماره</label>
+          <select id="hold-customer" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-gold-500/30 font-bold"></select>
+          <input id="hold-phone" type="tel" dir="ltr" placeholder="شماره جدید" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-gold-500/30 font-black text-right" />
+          <div id="hold-last" class="p-3 rounded-2xl bg-cream-100/80 dark:bg-zinc-900 text-xs space-y-1"></div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs font-black">کف قیمت روز</label>
+          <input id="hold-price-q" placeholder="جستجوی کالا" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-gold-500/30 font-bold" />
+          <div id="hold-prices" class="space-y-1.5 max-h-64 overflow-y-auto"></div>
+        </div>
+        <div class="space-y-2 flex flex-col">
+          <label class="text-xs font-black">یادداشت مکالمه</label>
+          <textarea id="hold-note" rows="6" placeholder="خلاصه حرف مشتری..." class="w-full flex-1 px-3 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-gold-500/30 font-bold"></textarea>
+          <button type="button" id="btn-hold-save" class="w-full py-3 rounded-xl emerald-gradient text-white font-black min-h-[48px]">ثبت و پایان تماس</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mg-cmd" class="fixed inset-0 hidden items-start justify-center p-4 pt-[12vh] bg-zinc-950/55">
+    <div class="modal-spring glass-strong rounded-3xl w-full max-w-xl border-2 border-gold-500/50 overflow-hidden">
+      <input id="mg-cmd-input" class="w-full px-4 py-4 bg-transparent font-bold text-base focus:outline-none" placeholder="جستجوی مشتری، معامله، استعلام..." />
+      <div id="mg-cmd-list" class="max-h-80 overflow-y-auto p-2 space-y-1"></div>
+    </div>
+  </div>
+
+  <div id="mg-undo" class="fixed hidden glass-strong rounded-2xl border border-gold-500/40 p-3 shadow-2xl">
+    <div class="flex items-center justify-between gap-3">
+      <span id="mg-undo-label" class="text-xs font-black">انجام شد</span>
+      <button type="button" id="mg-undo-btn" class="px-3 py-1.5 rounded-xl gold-gradient text-zinc-950 text-xs font-black min-h-[36px]">بازگردانی</button>
+    </div>
+    <div class="mt-2 h-1.5 rounded-full bg-zinc-300/40 dark:bg-zinc-700 overflow-hidden"><span id="mg-undo-fill" class="block h-full gold-gradient" style="width:100%"></span></div>
   </div>
 
   <!-- ===================================================== -->
@@ -2101,6 +2307,7 @@
         <span class="inline-block px-3 py-0.5 rounded-full text-[11px] font-black bg-gold-500/20 text-gold-600 dark:text-gold-300">ورود امن به سامانه یکپارچه</span>
         <h2 class="text-lg sm:text-xl font-black">سامانه CRM و باشگاه مشتریان «مشهد گستر»</h2>
         <p class="text-xs text-zinc-500 dark:text-zinc-400">لطفاً با نام کاربری و رمز عبور اختصاصی خود وارد شوید</p>
+        <p class="text-xs font-bold text-gold-700 dark:text-gold-300">حساب مدیر: erfan</p>
       </div>
 
       <form id="auth-login-form" class="space-y-3.5 text-xs sm:text-sm" novalidate>
@@ -2139,6 +2346,7 @@
         <h2 class="text-lg font-black">یک رمز قوی برای حساب خود بگذارید</h2>
         <p class="text-xs text-zinc-500">حداقل ۱۰ کاراکتر، شامل حرف و عدد. تا وقتی عوض نشود، داده‌های سرور باز نمی‌شوند.</p>
       </div>
+      <input id="mc-username-hidden" name="username" type="text" autocomplete="username" class="sr-only" tabindex="-1" aria-hidden="true" />
       <input id="mc-new-pass" type="password" dir="ltr" required minlength="10" autocomplete="new-password" placeholder="رمز جدید" class="w-full px-4 py-3 rounded-2xl bg-cream-100 dark:bg-zinc-900 border border-gold-500/40 font-black text-left focus:outline-none focus:ring-2 focus:ring-gold-500" />
       <input id="mc-new-pass2" type="password" dir="ltr" required minlength="10" autocomplete="new-password" placeholder="تکرار رمز جدید" class="w-full px-4 py-3 rounded-2xl bg-cream-100 dark:bg-zinc-900 border border-gold-500/40 font-black text-left focus:outline-none focus:ring-2 focus:ring-gold-500" />
       <div id="mc-pass-error" class="hidden p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-bold text-center"></div>
@@ -2546,7 +2754,7 @@
       const SCENARIOS_STORAGE_KEY = 'mashhad_gostar_scenarios_v5';
 
       let state = {
-        activeTab: 'radar',
+        activeTab: 'home',
         psSubTab: 'ps-card',
         psStep: 1,
         alarmFilter: 'all',
@@ -2705,16 +2913,403 @@
       // ==========================================
       // NAVIGATION CONTROLLER
       // ==========================================
+      function applyTheme(dark) {
+        document.documentElement.classList.toggle('dark', !!dark);
+        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+        try { localStorage.setItem('mg-theme', dark ? 'dark' : 'light'); } catch (e) {}
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', dark ? '#090A0F' : '#F5F2EB');
+      }
+      function toggleTheme() {
+        const next = !document.documentElement.classList.contains('dark');
+        applyTheme(next);
+        try {
+          if (state.activeTab === 'radar') renderRadarCharts();
+          if (state.activeTab === 'pricestudio') renderPriceStudioCard();
+          if (typeof refreshLiveTicker === 'function') refreshLiveTicker();
+        } catch (e) {}
+        showToast(next ? 'حالت شب فعال شد' : 'حالت روز فعال شد', 'info');
+      }
+
+      let hubPane = 'follow';
+      let holdTimer = null;
+      let holdStartedAt = 0;
+      let undoTimer = null;
+      let undoAction = null;
+      let cmdIndex = 0;
+      let cmdItems = [];
+
+      function dueTone(dateStr) {
+        const today = jalaliToDays(getSystemJalaliDate(0));
+        const d = jalaliToDays(dateStr || getSystemJalaliDate(0));
+        if (d < today) return { cls: 'bg-rose-500', w: 100, label: 'معوقه' };
+        if (d === today) return { cls: 'bg-amber-500', w: 72, label: 'امروز' };
+        const gap = Math.min(30, d - today);
+        return { cls: 'bg-emerald-500', w: Math.max(18, 100 - gap * 3), label: 'آینده' };
+      }
+
+      function scheduleUndo(label, undoFn, commitFn) {
+        if (undoTimer) { clearInterval(undoTimer); undoTimer = null; }
+        if (undoAction && typeof undoAction.commit === 'function') {
+          try { undoAction.commit(); } catch (e) {}
+        }
+        undoAction = { undo: undoFn, commit: commitFn };
+        const box = document.getElementById('mg-undo');
+        const fill = document.getElementById('mg-undo-fill');
+        const lbl = document.getElementById('mg-undo-label');
+        if (!box || !fill || !lbl) { if (commitFn) commitFn(); return; }
+        lbl.textContent = label;
+        box.classList.remove('hidden');
+        let left = 5000;
+        fill.style.width = '100%';
+        const started = Date.now();
+        undoTimer = setInterval(() => {
+          left = Math.max(0, 5000 - (Date.now() - started));
+          fill.style.width = `${(left / 5000) * 100}%`;
+          if (left <= 0) {
+            clearInterval(undoTimer);
+            undoTimer = null;
+            box.classList.add('hidden');
+            const act = undoAction;
+            undoAction = null;
+            if (act && act.commit) act.commit();
+          }
+        }, 40);
+      }
+
+      function cancelUndo() {
+        if (!undoAction) return;
+        if (undoTimer) { clearInterval(undoTimer); undoTimer = null; }
+        try { undoAction.undo(); } catch (e) {}
+        undoAction = null;
+        const box = document.getElementById('mg-undo');
+        if (box) box.classList.add('hidden');
+        showToast('عملیات بازگردانی شد', 'info');
+      }
+
+      function promoteMissedCallToDeal(mc, opts) {
+        if (!mc) return null;
+        ensureMissedCallsState();
+        const phone = String(mc.phone || '').trim();
+        let cust = state.customers.find(c => toEnglishDigits(c.phone || '') === toEnglishDigits(phone));
+        if (!cust) {
+          cust = {
+            id: 'cust-' + Date.now(),
+            code: 'VIP-' + (100 + state.customers.length + 1),
+            name: (opts && opts.name) || mc.title || 'تماس بی‌پاسخ',
+            company: '',
+            phone,
+            source: 'تماس بی‌پاسخ',
+            birthDate: '',
+            totalSpent: 0,
+            ordersCount: 0,
+            referrals: 0,
+            bonusPoints: 0,
+            lastPurchaseDate: getSystemJalaliDate(0),
+            tags: ['بی‌پاسخ'],
+            invoices: [],
+            timeline: [],
+            equipment: []
+          };
+          state.customers.unshift(cust);
+        }
+        const deal = {
+          id: 'deal-' + Date.now(),
+          customerId: cust.id,
+          customerName: cust.name,
+          title: mc.title || 'پیگیری تماس بی‌پاسخ',
+          amount: (opts && opts.amount) || 0,
+          stage: 'lead',
+          orderType: 'سفارش فروش کالا',
+          notes: mc.note || 'تبدیل از دفترچه تماس بی‌پاسخ',
+          callerPhone: phone,
+          followupDate: getSystemJalaliDate(0),
+          createdAtTime: getSystemTimeStr(),
+          fromMissedId: mc.id,
+          isNewEntry: true
+        };
+        state.deals.unshift(deal);
+        cust.timeline.unshift({
+          date: getSystemTimestamp(),
+          text: `📞 تماس کارشناس از دفترچه بی‌پاسخ ثبت و وارد قیف فروش شد: ${deal.title}`
+        });
+        mc.done = 1;
+        mc.res = 'تماس گرفته شد و وارد پیگیری شد';
+        mc.by = (window.__me && window.__me.username) || 'system';
+        mc.dt = getSystemJalaliDate(0) + ' ' + getSystemTimeStr();
+        mc.u = Date.now();
+        saveState();
+        return { cust, deal };
+      }
+
+      function ensureWarrantyForDeal(deal) {
+        if (!deal) return;
+        const cust = state.customers.find(c => c.id === deal.customerId);
+        if (!cust) return;
+        if (!Array.isArray(cust.equipment)) cust.equipment = [];
+        if (cust.equipment.some(eq => eq.dealId === deal.id)) return;
+        const install = getSystemJalaliDate(0);
+        const service = getSystemJalaliDate(180);
+        const warrantyEnd = getSystemJalaliDate(730);
+        cust.equipment.unshift({
+          id: 'eq-' + Date.now(),
+          dealId: deal.id,
+          title: deal.title,
+          amount: deal.amount || 0,
+          installDate: install,
+          warrantyMonths: 24,
+          warrantyEnd,
+          nextService: service
+        });
+        const alarmDeal = {
+          id: 'deal-svc-' + Date.now(),
+          customerId: cust.id,
+          customerName: cust.name,
+          title: 'سرویس دوره‌ای: ' + deal.title,
+          amount: 0,
+          stage: 'negotiation',
+          orderType: 'خدمات نصب و اجرا',
+          notes: 'آلارم خودکار سرویس ۶ ماهه',
+          callerPhone: cust.phone,
+          followupDate: service,
+          createdAtTime: getSystemTimeStr(),
+          isServiceAlarm: true
+        };
+        state.deals.unshift(alarmDeal);
+        cust.timeline.unshift({
+          date: getSystemTimestamp(),
+          text: `🛠️ تجهیزات نصب و گارانتی ۲۴ ماهه ثبت شد. سرویس بعدی: ${toPersianNum(service)}`
+        });
+      }
+
+      function refreshLiveTicker() {
+        const track = document.getElementById('mg-ticker-track');
+        if (!track) return;
+        const profiles = (window.wsData && window.wsData().profiles) || {};
+        const users = window.__users || [];
+        const bits = [];
+        users.forEach(u => {
+          const st = (profiles[u.username] || {}).st || 'آنلاین';
+          const color = st === 'مشغول' ? '#f59e0b' : st === 'مرخصی' ? '#94a3b8' : '#10b981';
+          bits.push(`<span class="mg-tick"><i style="background:${color}"></i>${u.displayName}: ${st}</span>`);
+        });
+        state.quotes.slice(0, 8).forEach(q => {
+          bits.push(`<span class="mg-tick">🏷️ ${q.productName}: ${formatPrice(q.price)} تومان</span>`);
+        });
+        if (!bits.length) bits.push('<span class="mg-tick">سامانه آماده است</span>');
+        track.innerHTML = bits.concat(bits).join('');
+      }
+
+      function setHubPane(pane) {
+        hubPane = pane || 'follow';
+        ['follow', 'book', 'new', 'file'].forEach(k => {
+          const el = document.getElementById('hub-' + k);
+          if (el) el.classList.toggle('hidden', k !== hubPane);
+        });
+        document.querySelectorAll('[data-hub]').forEach(btn => {
+          const on = btn.getAttribute('data-hub') === hubPane;
+          btn.classList.toggle('gold-gradient', on);
+          btn.classList.toggle('text-zinc-950', on);
+          btn.classList.toggle('bg-cream-200/80', !on);
+          btn.classList.toggle('dark:bg-zinc-900', !on);
+        });
+        renderHomeHub();
+      }
+
+      function renderHomeHub() {
+        const dateEl = document.getElementById('home-date');
+        if (dateEl) dateEl.textContent = toPersianNum(getSystemJalaliDate(0)) + ' • ' + getSystemTimeStr();
+        const todayBox = document.getElementById('home-today');
+        if (todayBox) {
+          const today = jalaliToDays(getSystemJalaliDate(0));
+          const tasks = ((window.wsData && window.wsData().tasks) || []).filter(t => !t.del && t.st !== 'k' && (!t.due || jalaliToDays(t.due) <= today)).slice(0, 8);
+          const alarms = state.deals.filter(d => d.stage !== 'won' && jalaliToDays(d.followupDate) <= today).slice(0, 8);
+          const cards = [];
+          tasks.forEach(t => cards.push(`<div class="min-w-[180px] p-3 rounded-2xl bg-cream-100 dark:bg-zinc-900 border border-gold-500/30 text-xs"><b class="font-black">${t.title}</b><div class="text-[11px] text-zinc-500 mt-1">کار • ${t.due ? toPersianNum(t.due) : 'امروز'}</div></div>`));
+          alarms.forEach(d => cards.push(`<button type="button" data-open-alarm="${d.id}" class="min-w-[200px] p-3 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-xs text-right"><b class="font-black">${d.customerName}</b><div class="text-[11px] mt-1">${d.title}</div></button>`));
+          if (!cards.length) cards.push('<div class="p-3 rounded-2xl bg-cream-100 dark:bg-zinc-900 text-xs font-bold text-zinc-500">برای امروز کار باز ندارید</div>');
+          todayBox.innerHTML = cards.join('');
+        }
+
+        const alarmsBox = document.getElementById('hub-alarms');
+        if (alarmsBox) {
+          const open = state.deals.filter(d => d.stage !== 'won' && d.stage !== 'canceled').sort((a, b) => jalaliToDays(a.followupDate) - jalaliToDays(b.followupDate)).slice(0, 20);
+          alarmsBox.innerHTML = open.map(d => {
+            const tone = dueTone(d.followupDate);
+            const phone = d.callerPhone || ((state.customers.find(c => c.id === d.customerId) || {}).phone || '');
+            return `<div class="p-3 rounded-2xl bg-cream-100/90 dark:bg-zinc-900/90 border border-gold-500/25 space-y-2">
+              <div class="flex items-center justify-between gap-2"><strong class="text-xs font-black">${d.customerName}</strong><span class="text-[11px] font-bold">${toPersianNum(d.followupDate)}</span></div>
+              <p class="text-xs">${d.title}</p>
+              <div class="mg-duebar"><span class="${tone.cls}" style="width:${tone.w}%"></span></div>
+              <div class="flex flex-wrap gap-1.5">
+                <a href="tel:${phone}" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[11px] font-black">تماس</a>
+                <button type="button" data-open-dossier="${d.customerId}" class="px-2.5 py-1.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-[11px] font-bold">پرونده</button>
+                <button type="button" data-open-alarm="${d.id}" class="px-2.5 py-1.5 rounded-xl gold-gradient text-zinc-950 text-[11px] font-black">ثبت پیگیری</button>
+              </div>
+            </div>`;
+          }).join('') || '<div class="p-4 text-xs font-bold text-zinc-500 text-center">پیگیری بازی نیست</div>';
+        }
+
+        const missedBox = document.getElementById('hub-missed-list');
+        if (missedBox) {
+          ensureMissedCallsState();
+          const openMc = state.missedCalls.filter(x => !x.done);
+          missedBox.innerHTML = openMc.map(mc => `
+            <div class="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/25 space-y-2">
+              <div class="flex items-center justify-between gap-2"><strong class="text-xs font-black">${mc.title}</strong><span class="text-[11px]">${toPersianNum(mc.date || '')}</span></div>
+              <a href="tel:${mc.phone}" data-mc-call="${mc.id}" class="inline-flex px-2.5 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-xs font-black" dir="ltr">📞 ${toPersianNum(mc.phone)}</a>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" data-mc-to-deal="${mc.id}" class="px-2.5 py-1.5 rounded-xl gold-gradient text-zinc-950 text-[11px] font-black">تبدیل به پیگیری</button>
+                <button type="button" data-mc-done="${mc.id}" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-700 text-[11px] font-black">پیگیری شد</button>
+              </div>
+            </div>`).join('') || '<div class="p-4 text-xs font-bold text-zinc-500 text-center">دفترچه خالی است</div>';
+        }
+
+        const files = document.getElementById('hub-files');
+        const fq = (document.getElementById('hub-file-q') || {}).value || '';
+        if (files) {
+          files.innerHTML = state.customers.filter(c => fuzzyMatch(`${c.name} ${c.phone} ${c.company || ''}`, fq)).slice(0, 20).map(c => `
+            <button type="button" data-open-dossier="${c.id}" class="w-full text-right p-3 rounded-2xl bg-cream-100 dark:bg-zinc-900 border border-gold-500/25">
+              <strong class="text-xs font-black">${c.name}</strong>
+              <span class="text-[11px] text-zinc-500 mr-2" dir="ltr">${toPersianNum(c.phone)}</span>
+            </button>`).join('') || '<div class="p-4 text-xs font-bold text-zinc-500 text-center">پرونده‌ای نیست</div>';
+        }
+
+        const chatBox = document.getElementById('home-chat-msgs');
+        if (chatBox && window.wsData) {
+          const msgs = (window.wsData().msgs || []).filter(m => !m.del && m.c === 'all').sort((a, b) => a.t - b.t).slice(-12);
+          chatBox.innerHTML = msgs.map(m => {
+            const mine = window.__me && m.from === window.__me.username;
+            if (m.type === 'card') {
+              return `<div class="mg-bubble ${mine ? 'mine' : 'theirs'}"><div class="mg-card-chip text-xs"><b>${m.cust || ''}</b><div>${toPersianNum(m.phone || '')}</div><div>${m.status || ''}</div>${m.customerId ? `<button type="button" data-open-dossier="${m.customerId}" class="mt-1 px-2 py-1 rounded-lg gold-gradient text-zinc-950 text-[11px] font-black">باز کردن پرونده</button>` : ''}</div></div>`;
+            }
+            return `<div class="mg-bubble ${mine ? 'mine' : 'theirs'} text-xs">${m.txt || m.type || ''}</div>`;
+          }).join('') || '<p class="text-xs text-zinc-500">پیامی در گروه نیست</p>';
+        }
+      }
+
+      function renderHomeTab() {
+        setHubPane(hubPane);
+        refreshLiveTicker();
+      }
+
+      function openHoldMode() {
+        openModalById('hold-modal');
+        const sel = document.getElementById('hold-customer');
+        if (sel) {
+          sel.innerHTML = '<option value="">انتخاب مشتری...</option>' + state.customers.map(c => `<option value="${c.id}">${c.name} (${toPersianNum(c.phone)})</option>`).join('');
+        }
+        holdStartedAt = Date.now();
+        const timer = document.getElementById('hold-timer');
+        if (holdTimer) clearInterval(holdTimer);
+        holdTimer = setInterval(() => {
+          const sec = Math.floor((Date.now() - holdStartedAt) / 1000);
+          const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+          const ss = String(sec % 60).padStart(2, '0');
+          if (timer) timer.textContent = toPersianNum(`${mm}:${ss}`);
+        }, 250);
+        refreshHoldPanels();
+      }
+
+      function closeHoldMode() {
+        if (holdTimer) { clearInterval(holdTimer); holdTimer = null; }
+        closeModalById('hold-modal');
+      }
+
+      function refreshHoldPanels() {
+        const custId = (document.getElementById('hold-customer') || {}).value;
+        const cust = state.customers.find(c => c.id === custId);
+        const last = document.getElementById('hold-last');
+        if (last) {
+          if (!cust) last.innerHTML = '<span class="text-zinc-500">مشتری را انتخاب کنید یا شماره جدید بزنید</span>';
+          else {
+            const note = (cust.timeline && cust.timeline[0] && cust.timeline[0].text) || 'بدون یادداشت';
+            last.innerHTML = `<div><b>${cust.name}</b></div><div>آخرین خرید: ${toPersianNum(cust.lastPurchaseDate || '—')} • ${formatPrice(cust.totalSpent || 0)} تومان</div><div class="text-zinc-500">${note}</div>`;
+          }
+        }
+        const q = (document.getElementById('hold-price-q') || {}).value || '';
+        const box = document.getElementById('hold-prices');
+        if (box) {
+          const list = state.quotes.filter(x => fuzzyMatch(`${x.productName} ${x.supplier}`, q)).slice(0, 12);
+          box.innerHTML = list.map(x => `<div class="p-2 rounded-xl bg-cream-100 dark:bg-zinc-900 text-xs flex justify-between gap-2"><span>${x.productName}</span><b class="text-emerald-600">${formatPrice(x.price)}</b></div>`).join('') || '<div class="text-xs text-zinc-500">قیمتی نیست</div>';
+        }
+      }
+
+      function openCommandPalette() {
+        const overlay = document.getElementById('mg-cmd');
+        const inp = document.getElementById('mg-cmd-input');
+        if (!overlay || !inp) return;
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+        inp.value = '';
+        cmdIndex = 0;
+        renderCommandList('');
+        setTimeout(() => inp.focus(), 30);
+      }
+
+      function closeCommandPalette() {
+        const overlay = document.getElementById('mg-cmd');
+        if (!overlay) return;
+        overlay.classList.add('hidden');
+        overlay.classList.remove('flex');
+      }
+
+      function renderCommandList(q) {
+        const list = document.getElementById('mg-cmd-list');
+        if (!list) return;
+        cmdItems = [];
+        state.customers.filter(c => fuzzyMatch(`${c.name} ${c.phone} ${c.company || ''}`, q)).slice(0, 6).forEach(c => {
+          cmdItems.push({ kind: 'cust', id: c.id, label: `پرونده • ${c.name}`, sub: toPersianNum(c.phone) });
+        });
+        state.deals.filter(d => fuzzyMatch(`${d.customerName} ${d.title}`, q)).slice(0, 5).forEach(d => {
+          cmdItems.push({ kind: 'deal', id: d.id, label: `معامله • ${d.title}`, sub: d.customerName });
+        });
+        state.quotes.filter(x => fuzzyMatch(`${x.productName} ${x.supplier}`, q)).slice(0, 5).forEach(x => {
+          cmdItems.push({ kind: 'quote', id: x.productName, label: `قیمت • ${x.productName}`, sub: formatPrice(x.price) + ' تومان' });
+        });
+        if (!cmdItems.length) {
+          list.innerHTML = '<div class="p-3 text-xs text-zinc-500 font-bold text-center">موردی پیدا نشد</div>';
+          return;
+        }
+        list.innerHTML = cmdItems.map((it, i) => `
+          <button type="button" data-cmd-i="${i}" class="w-full text-right px-3 py-2.5 rounded-xl ${i === cmdIndex ? 'gold-gradient text-zinc-950' : 'hover:bg-gold-500/15'}">
+            <div class="text-xs font-black">${it.label}</div>
+            <div class="text-[11px] opacity-70">${it.sub || ''}</div>
+          </button>`).join('');
+      }
+
+      function runCommandItem(it) {
+        closeCommandPalette();
+        if (!it) return;
+        if (it.kind === 'cust') openCustomerDossierModal(it.id);
+        else if (it.kind === 'deal') { switchMainTab('pipeline'); }
+        else if (it.kind === 'quote') {
+          state.selectedProductForCard = it.id;
+          switchMainTab('pricestudio');
+        }
+      }
+
       function switchMainTab(tabName) {
+        if (tabName === 'radar' && !(window.__me && window.__me.role === 'admin') && document.getElementById('view-home')) {
+          tabName = 'home';
+        }
         state.activeTab = tabName;
         if (tabName !== 'work') document.body.classList.remove('mg-chat-open');
-        ['radar', 'club', 'pipeline', 'pricestudio', 'automation', 'work'].forEach(t => {
+        ['home', 'radar', 'club', 'pipeline', 'pricestudio', 'automation', 'work'].forEach(t => {
           const sec = document.getElementById(`view-${t}`);
-          if (sec) sec.classList.toggle('hidden', t !== tabName);
+          if (!sec) return;
+          const show = t === tabName;
+          sec.classList.toggle('hidden', !show);
+          if (show) {
+            sec.classList.remove('mg-enter');
+            void sec.offsetWidth;
+            sec.classList.add('mg-enter');
+          }
         });
 
         document.querySelectorAll('.nav-tab-btn').forEach(btn => {
           const t = btn.getAttribute('data-tab');
+          if (!t) return;
           if (t === tabName) {
             btn.classList.add('gold-gradient', 'text-zinc-950', 'shadow-md');
             btn.classList.remove('text-zinc-600', 'dark:text-zinc-400');
@@ -2726,7 +3321,8 @@
 
         updateBadges();
         syncSystemDateInputs();
-        if (tabName === 'radar') renderRadarTab();
+        if (tabName === 'home') renderHomeTab();
+        if (tabName === 'radar') { renderRadarTab(); refreshLiveTicker(); }
         if (tabName === 'club') renderClubTab();
         if (tabName === 'pipeline') renderPipelineTab();
         if (tabName === 'pricestudio') renderPriceStudioTab();
@@ -3167,6 +3763,7 @@
                         <span>⏰ ${d.createdAtTime || 'ثبت سیستمی'}</span>
                       </div>
                       ${d.notes ? `<p class="text-[11px] text-zinc-500 dark:text-zinc-400 bg-cream-50 dark:bg-zinc-950/50 p-2 rounded-lg leading-relaxed">${d.notes}</p>` : ''}
+                      ${(() => { const tone = dueTone(d.followupDate); return `<div class="mg-duebar" title="${tone.label}"><span class="${tone.cls}" style="width:${tone.w}%"></span></div>`; })()}
 
                       <!-- V5 Action Dock: Prev Stage | Next Stage | Edit | Invoice | Delete -->
                       <div class="kanban-actions pt-2.5 border-t border-zinc-200/70 dark:border-zinc-800">
@@ -3603,8 +4200,9 @@
       }
 
       function switchDossierInnerTab(tabKey) {
-        ['stages', 'invoices', 'chats'].forEach(k => {
-          document.getElementById(`cdm-panel-${k}`).classList.toggle('hidden', k !== tabKey);
+        ['stages', 'invoices', 'chats', 'gear'].forEach(k => {
+          const panel = document.getElementById(`cdm-panel-${k}`);
+          if (panel) panel.classList.toggle('hidden', k !== tabKey);
         });
         document.querySelectorAll('.cdm-tab-btn').forEach(btn => {
           const k = btn.getAttribute('data-cdm-tab');
@@ -3692,6 +4290,30 @@
             </div>
           </div>
         `).join('');
+
+        const gearPanel = document.getElementById('cdm-panel-gear');
+        if (gearPanel) {
+          // اگر معامله‌های قطعی بدون کارت گارانتی مانده‌اند، همین‌جا بساز
+          state.deals.filter(d => d.customerId === c.id && d.stage === 'won' && !d.isServiceAlarm).forEach(d => ensureWarrantyForDeal(d));
+          const eqs = Array.isArray(c.equipment) ? c.equipment : [];
+          if (!eqs.length) {
+            gearPanel.innerHTML = `<div class="p-6 rounded-2xl bg-cream-100 dark:bg-zinc-900 text-center text-xs font-bold text-zinc-500">هنوز تجهیزی برای گارانتی ثبت نشده. با انتقال معامله به خرید قطعی ساخته می‌شود.</div>`;
+          } else {
+            const today = jalaliToDays(getSystemJalaliDate(0));
+            gearPanel.innerHTML = eqs.map(eq => {
+              const end = jalaliToDays(eq.warrantyEnd || getSystemJalaliDate(730));
+              const start = jalaliToDays(eq.installDate || getSystemJalaliDate(0));
+              const total = Math.max(1, end - start);
+              const done = Math.min(100, Math.max(0, Math.round(((today - start) / total) * 100)));
+              return `<div class="p-4 rounded-2xl bg-cream-100/95 dark:bg-zinc-900/95 border border-gold-500/30 space-y-2">
+                <div class="flex items-center justify-between gap-2"><strong class="text-sm font-black">${eq.title}</strong><span class="text-xs font-black text-emerald-600">${formatPrice(eq.amount || 0)} تومان</span></div>
+                <div class="text-[11px] text-zinc-500">نصب: ${toPersianNum(eq.installDate)} • گارانتی ۲۴ ماه تا ${toPersianNum(eq.warrantyEnd)} • سرویس بعدی: ${toPersianNum(eq.nextService)}</div>
+                <div class="h-2.5 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden"><span class="block h-full gold-gradient" style="width:${done}%"></span></div>
+                <div class="text-[11px] font-bold text-gold-700 dark:text-gold-300">پیشرفت دوره گارانتی: ${toPersianNum(done)}٪</div>
+              </div>`;
+            }).join('');
+          }
+        }
       }
 
       function renderMiniDossierInFollowupForm() {
@@ -4245,7 +4867,7 @@
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-2">
-              <a href="tel:${mc.phone}" class="px-2.5 py-1 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-xs font-black flex items-center gap-1" dir="ltr">
+              <a href="tel:${mc.phone}" data-mc-call="${mc.id}" class="px-2.5 py-1 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-xs font-black flex items-center gap-1" dir="ltr">
                 📞 ${toPersianNum(mc.phone)}
               </a>
               <div class="flex items-center gap-1">
@@ -4293,10 +4915,142 @@
         });
 
         // Theme & 3D Toggles
-        document.getElementById('btn-toggle-theme').addEventListener('click', () => {
-          document.documentElement.classList.toggle('dark');
-          if (state.activeTab === 'radar') renderRadarCharts();
-          if (state.activeTab === 'pricestudio') renderPriceStudioCard();
+        document.getElementById('btn-toggle-theme').addEventListener('click', toggleTheme);
+        document.getElementById('btn-hold-mode')?.addEventListener('click', openHoldMode);
+        document.getElementById('btn-hold-radar')?.addEventListener('click', openHoldMode);
+        document.getElementById('btn-open-search')?.addEventListener('click', openCommandPalette);
+        document.getElementById('btn-home-reports')?.addEventListener('click', () => switchMainTab('radar'));
+        document.getElementById('btn-hold-close')?.addEventListener('click', closeHoldMode);
+        document.getElementById('btn-hold-save')?.addEventListener('click', () => {
+          const custId = document.getElementById('hold-customer').value;
+          const phone = document.getElementById('hold-phone').value.trim();
+          const note = document.getElementById('hold-note').value.trim();
+          if (!note) { showToast('یادداشت مکالمه لازم است', 'error'); return; }
+          let cust = state.customers.find(c => c.id === custId);
+          if (!cust && phone) {
+            cust = {
+              id: 'cust-' + Date.now(), code: 'VIP-' + (100 + state.customers.length + 1),
+              name: 'تماس زنده ' + phone, company: '', phone, source: 'پشت خط', birthDate: '',
+              totalSpent: 0, ordersCount: 0, referrals: 0, bonusPoints: 0,
+              lastPurchaseDate: getSystemJalaliDate(0), tags: ['پشت خط'], invoices: [], timeline: [], equipment: []
+            };
+            state.customers.unshift(cust);
+          }
+          if (!cust) { showToast('مشتری یا شماره را مشخص کنید', 'error'); return; }
+          cust.timeline.unshift({ date: getSystemTimestamp(), text: `🎧 یادداشت پشت خط: ${note}` });
+          saveState();
+          document.getElementById('hold-note').value = '';
+          closeHoldMode();
+          showToast('مکالمه در تایم‌لاین پرونده ذخیره شد');
+        });
+        document.getElementById('hold-customer')?.addEventListener('change', refreshHoldPanels);
+        document.getElementById('hold-price-q')?.addEventListener('input', refreshHoldPanels);
+        document.getElementById('mg-undo-btn')?.addEventListener('click', cancelUndo);
+        document.getElementById('mg-fab-main')?.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          const fab = document.getElementById('mg-fab');
+          const menu = fab.querySelector('.mg-fab-menu');
+          const open = !fab.classList.contains('is-open');
+          fab.classList.toggle('is-open', open);
+          menu.classList.toggle('hidden', !open);
+        });
+        document.querySelectorAll('[data-fab]').forEach(btn => btn.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          const act = btn.getAttribute('data-fab');
+          const fab = document.getElementById('mg-fab');
+          fab.classList.remove('is-open');
+          fab.querySelector('.mg-fab-menu')?.classList.add('hidden');
+          if (act === 'missed') { switchMainTab('home'); setHubPane('book'); }
+          if (act === 'quote') switchMainTab('pricestudio');
+          if (act === 'hold') openHoldMode();
+        }));
+        document.addEventListener('click', e => {
+          const fab = document.getElementById('mg-fab');
+          if (!fab || !fab.classList.contains('is-open')) return;
+          if (e.target.closest('#mg-fab')) return;
+          fab.classList.remove('is-open');
+          fab.querySelector('.mg-fab-menu')?.classList.add('hidden');
+        });
+        document.querySelectorAll('[data-hub]').forEach(btn => btn.addEventListener('click', () => setHubPane(btn.getAttribute('data-hub'))));
+        document.getElementById('hub-mc-form')?.addEventListener('submit', e => {
+          e.preventDefault();
+          ensureMissedCallsState();
+          const phone = document.getElementById('hub-mc-phone').value.trim();
+          const title = document.getElementById('hub-mc-title').value.trim();
+          if (!phone || !title) return;
+          state.missedCalls.unshift({ id: 'mc-' + Date.now(), phone, title, note: '', date: getSystemJalaliDate(0), time: getSystemTimeStr(), isNewEntry: true });
+          saveState();
+          e.target.reset();
+          renderHomeHub();
+          renderMissedCallsBook();
+          showToast('در دفترچه تلفن ثبت شد');
+        });
+        document.getElementById('hub-fu-form')?.addEventListener('submit', e => {
+          e.preventDefault();
+          const name = document.getElementById('hub-fu-name').value.trim();
+          const phone = document.getElementById('hub-fu-phone').value.trim();
+          const title = document.getElementById('hub-fu-title').value.trim();
+          const amount = parseCleanNumber(document.getElementById('hub-fu-amount').value);
+          if (!name || !phone || !title) { showToast('نام، شماره و موضوع لازم است', 'error'); return; }
+          let cust = state.customers.find(c => toEnglishDigits(c.phone) === toEnglishDigits(phone));
+          if (!cust) {
+            cust = {
+              id: 'cust-' + Date.now(), code: 'VIP-' + (100 + state.customers.length + 1), name, company: '', phone,
+              source: 'ثبت سریع خانه', birthDate: '', totalSpent: 0, ordersCount: 0, referrals: 0, bonusPoints: 0,
+              lastPurchaseDate: getSystemJalaliDate(0), tags: ['پیگیری سریع'], invoices: [], timeline: [], equipment: []
+            };
+            state.customers.unshift(cust);
+          }
+          state.deals.unshift({
+            id: 'deal-' + Date.now(), customerId: cust.id, customerName: cust.name, title, amount: amount || 0,
+            stage: 'lead', orderType: 'سفارش فروش کالا', notes: 'ثبت از خانه', callerPhone: phone,
+            followupDate: getSystemJalaliDate(0), createdAtTime: getSystemTimeStr(), isNewEntry: true
+          });
+          cust.timeline.unshift({ date: getSystemTimestamp(), text: `📌 پیگیری سریع ثبت شد: ${title}` });
+          saveState();
+          e.target.reset();
+          setHubPane('follow');
+          showToast('در پیگیری و قیف فروش ثبت شد');
+        });
+        document.getElementById('hub-file-q')?.addEventListener('input', renderHomeHub);
+        document.getElementById('home-chat-send')?.addEventListener('click', () => {
+          const inp = document.getElementById('home-chat-txt');
+          const v = (inp.value || '').trim();
+          if (!v || !window.wsData) return;
+          const WS = window.wsData();
+          WS.msgs.push({ id: 'm' + Date.now(), c: 'all', from: (window.__me || {}).username, t: Date.now(), u: Date.now(), type: 'text', txt: v });
+          try { localStorage.setItem('mg_ws_v8', JSON.stringify(WS)); } catch (err) {}
+          inp.value = '';
+          saveState();
+          renderHomeHub();
+          if (window.wsRenderWork) window.wsRenderWork();
+        });
+        document.getElementById('home-chat-txt')?.addEventListener('keydown', e => {
+          if (e.key === 'Enter') document.getElementById('home-chat-send')?.click();
+        });
+        document.getElementById('mg-cmd')?.addEventListener('click', e => {
+          if (e.target.id === 'mg-cmd') closeCommandPalette();
+          const item = e.target.closest('[data-cmd-i]');
+          if (item) runCommandItem(cmdItems[+item.getAttribute('data-cmd-i')]);
+        });
+        document.getElementById('mg-cmd-input')?.addEventListener('input', e => {
+          cmdIndex = 0;
+          renderCommandList(e.target.value);
+        });
+        document.addEventListener('keydown', e => {
+          if ((e.ctrlKey || e.metaKey) && String(e.key).toLowerCase() === 'k') {
+            e.preventDefault();
+            openCommandPalette();
+            return;
+          }
+          const overlay = document.getElementById('mg-cmd');
+          if (!overlay || overlay.classList.contains('hidden')) return;
+          if (e.key === 'Escape') { closeCommandPalette(); return; }
+          if (e.key === 'ArrowDown') { e.preventDefault(); cmdIndex = Math.min(cmdItems.length - 1, cmdIndex + 1); renderCommandList(document.getElementById('mg-cmd-input').value); }
+          if (e.key === 'ArrowUp') { e.preventDefault(); cmdIndex = Math.max(0, cmdIndex - 1); renderCommandList(document.getElementById('mg-cmd-input').value); }
+          if (e.key === 'Enter') { e.preventDefault(); runCommandItem(cmdItems[cmdIndex]); }
         });
         document.getElementById('btn-toggle-3d').addEventListener('click', e => {
           state.enable3D = !state.enable3D;
@@ -4786,6 +5540,7 @@
             cust.totalSpent = (cust.totalSpent || 0) + amount;
             cust.ordersCount = (cust.ordersCount || 0) + 1;
             cust.lastPurchaseDate = getSystemJalaliDate(0);
+            ensureWarrantyForDeal(newDeal);
           }
           saveState();
           document.getElementById('deal-form').reset();
@@ -4836,10 +5591,12 @@
                 c.totalSpent = (c.totalSpent || 0) + (d.amount || 0);
                 c.ordersCount = (c.ordersCount || 0) + 1;
                 c.lastPurchaseDate = getSystemJalaliDate(0);
+                ensureWarrantyForDeal(d);
               }
             }
             saveState();
             renderPipelineTab();
+            if (typeof renderRadarTab === 'function') renderRadarTab();
             showToast(`معامله به مرحله «${stageNames[d.stage]}» منتقل شد!`);
             return;
           }
@@ -4865,40 +5622,50 @@
             const id = archiveBtn.getAttribute('data-archive-deal');
             const d = state.deals.find(x => x.id === id);
             if (!d) return;
-            if (!confirm(`معامله «${d.title}» بایگانی شود و از قیف فروش خارج گردد؟`)) return;
-
-            const c = state.customers.find(x => x.id === d.customerId);
-            if (c) {
-              if (!c.timeline) c.timeline = [];
-              c.timeline.unshift({
-                date: getSystemTimestamp(),
-                text: `✅ معامله «${d.title}» با مبلغ ${formatPrice(d.amount)} تومان با موفقیت بایگانی شد و از قیف فروش خارج گردید.`
-              });
-              // Ensure spent is updated if not already
-              if (d.stage === 'won') {
-                c.totalSpent = (c.totalSpent || 0) + (d.amount || 0);
-                c.ordersCount = (c.ordersCount || 0) + 1;
-                c.lastPurchaseDate = getSystemJalaliDate(0);
-              }
-            }
-
+            const snapshot = Object.assign({}, d);
+            const prevDeals = state.deals.slice();
+            const prevArchived = Array.isArray(state.archivedDeals) ? state.archivedDeals.slice() : [];
+            state.deals = state.deals.filter(x => x.id !== id);
             if (!Array.isArray(state.archivedDeals)) state.archivedDeals = [];
             state.archivedDeals.unshift(Object.assign({}, d, { sourceDealId: d.id, archivedAt: getSystemTimestamp() }));
-            state.deals = state.deals.filter(x => x.id !== id);
-            saveState();
             renderPipelineTab();
-            if (typeof renderRadarTab === 'function') renderRadarTab();
-            showToast('معامله بایگانی شد و از قیف خارج گردید', 'success');
+            scheduleUndo(`بایگانی «${snapshot.title}» تا ۵ ثانیه قابل بازگشت است`, () => {
+              state.deals = prevDeals;
+              state.archivedDeals = prevArchived;
+              saveState();
+              renderPipelineTab();
+            }, () => {
+              const c = state.customers.find(x => x.id === snapshot.customerId);
+              if (c) {
+                if (!c.timeline) c.timeline = [];
+                c.timeline.unshift({
+                  date: getSystemTimestamp(),
+                  text: `✅ معامله «${snapshot.title}» با مبلغ ${formatPrice(snapshot.amount)} تومان بایگانی شد.`
+                });
+                if (snapshot.stage === 'won') ensureWarrantyForDeal(snapshot);
+              }
+              saveState();
+              if (typeof renderRadarTab === 'function') renderRadarTab();
+              showToast('معامله بایگانی شد', 'success');
+            });
             return;
           }
 
           const delBtn = e.target.closest('[data-delete-deal]');
           if (delBtn) {
             const id = delBtn.getAttribute('data-delete-deal');
+            const removed = state.deals.find(x => x.id === id);
+            const prev = state.deals.slice();
             state.deals = state.deals.filter(x => x.id !== id);
-            saveState();
             renderPipelineTab();
-            showToast('معامله حذف شد', 'info');
+            scheduleUndo('حذف معامله تا ۵ ثانیه قابل بازگشت است', () => {
+              state.deals = prev;
+              saveState();
+              renderPipelineTab();
+            }, () => {
+              saveState();
+              showToast('معامله حذف شد', 'info');
+            });
           }
         });
 
@@ -4962,6 +5729,7 @@
                 c.totalSpent = (c.totalSpent || 0) + (d.amount || 0);
                 c.ordersCount = (c.ordersCount || 0) + 1;
                 c.lastPurchaseDate = getSystemJalaliDate(0);
+                ensureWarrantyForDeal(d);
               }
             }
             saveState();
@@ -5544,19 +6312,31 @@
             showToast('تماس از دفترچه حذف شد', 'info');
             return;
           }
+          const callBtn = e.target.closest('[data-mc-call]');
+          if (callBtn) {
+            const id = callBtn.getAttribute('data-mc-call');
+            const item = state.missedCalls.find(x => x.id === id);
+            if (!item || item.done) return;
+            const res = promoteMissedCallToDeal(item);
+            renderMissedCallsBook();
+            if (typeof renderHomeHub === 'function') renderHomeHub();
+            if (typeof renderPipelineTab === 'function') renderPipelineTab();
+            if (typeof renderRadarTab === 'function') renderRadarTab();
+            showToast(res ? 'از بی‌پاسخ خارج و در پیگیری و قیف ثبت شد' : 'ثبت نشد', res ? 'success' : 'error');
+            return;
+          }
           const toDealBtn = e.target.closest('[data-mc-to-deal]');
           if (toDealBtn) {
             const id = toDealBtn.getAttribute('data-mc-to-deal');
             const item = state.missedCalls.find(x => x.id === id);
             if (!item) return;
-            switchMainTab('pipeline');
-            document.getElementById('deal-form-panel').classList.remove('hidden');
-            setDfCallerMode('new');
-            document.getElementById('df-new-caller-name').value = item.title;
-            document.getElementById('df-caller-phone').value = item.phone;
-            document.getElementById('df-title').value = item.title;
-            document.getElementById('df-call-notes').value = item.note || '';
-            showToast('مشخصات تماس به فرم ثبت پیگیری منتقل شد!');
+            const res = promoteMissedCallToDeal(item);
+            renderMissedCallsBook();
+            if (typeof renderHomeHub === 'function') renderHomeHub();
+            if (typeof renderPipelineTab === 'function') renderPipelineTab();
+            switchMainTab('home');
+            setHubPane('follow');
+            showToast(res ? 'تماس وارد پیگیری و قیف فروش شد' : 'ثبت نشد');
           }
         });
 
@@ -5567,6 +6347,15 @@
         const SESSION_STORAGE_KEY = 'mashhad_gostar_session_v7';
 
         const DEFAULT_USERS = [
+          {
+            id: 'usr-erfan',
+            username: 'erfan',
+            password: 'Erfan1385ho',
+            displayName: 'Erfan',
+            role: 'admin',
+            canDelete: true,
+            canExport: true
+          },
           {
             id: 'usr-admin',
             username: 'admin',
@@ -5677,6 +6466,7 @@
           }
 
           const isAdmin = currentUser.role === 'admin';
+          document.querySelectorAll('.mg-admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin));
           const adminSec = document.getElementById('admin-users-section');
           const agentSec = document.getElementById('agent-profile-section');
           if (adminSec) adminSec.classList.toggle('hidden', !isAdmin);
@@ -5693,6 +6483,12 @@
           if (resetBtn) resetBtn.classList.toggle('hidden', !isAdmin);
 
           renderUsersManagementList();
+        }
+
+        function landAfterAuth() {
+          const isAdmin = currentUser && currentUser.role === 'admin';
+          const target = (!isAdmin || !state.activeTab || state.activeTab === 'radar' && !isAdmin) ? 'home' : (state.activeTab || 'home');
+          if (typeof switchMainTab === 'function') switchMainTab(document.getElementById('view-' + target) ? target : 'home');
         }
 
         function renderUsersManagementList() {
@@ -5802,6 +6598,11 @@ function strongPassword(pw) {
           const login = document.getElementById('auth-login-modal');
           login.classList.add('hidden');
           login.classList.remove('flex');
+          const hiddenUser = document.getElementById('mc-username-hidden');
+          if (hiddenUser && currentUser) hiddenUser.value = currentUser.username || '';
+          const badge = document.getElementById('current-user-badge');
+          if (badge && currentUser) badge.textContent = `${currentUser.role === 'admin' ? '👑' : '🎧'} ${currentUser.displayName}`;
+          window.__me = currentUser;
         }
 
         function hideMustChange() {
@@ -5952,6 +6753,7 @@ function strongPassword(pw) {
             }
             applyRolePermissionsUI();
             await pullStateFromServer(true);
+            landAfterAuth();
           } catch (e) {}
         }
 
@@ -5993,6 +6795,7 @@ function strongPassword(pw) {
                 applyRolePermissionsUI();
                 showToast('خوش آمدید ' + data.user.displayName);
                 await pullStateFromServer(true);
+                landAfterAuth();
                 return;
               }
               if (res.status === 401) {
@@ -6012,6 +6815,7 @@ function strongPassword(pw) {
           rememberUser(matched);
           applyRolePermissionsUI();
           showToast('خوش آمدید ' + matched.displayName);
+          landAfterAuth();
         });
 
         document.getElementById('must-change-form').addEventListener('submit', async e => {
@@ -6045,6 +6849,7 @@ function strongPassword(pw) {
             applyRolePermissionsUI();
             showToast('رمز جدید ذخیره شد');
             await pullStateFromServer(true);
+            landAfterAuth();
           } catch (err2) {
             err.textContent = 'ارتباط با سرور قطع است';
             err.classList.remove('hidden');
@@ -6214,8 +7019,9 @@ function strongPassword(pw) {
         })();
         setInterval(() => pullStateFromServer(true), 8000);
 
-        switchMainTab('radar');
+        switchMainTab('home');
         initThreeBackground();
+        refreshLiveTicker();
       }
 
       (function(){
@@ -6231,7 +7037,8 @@ const tm=t=>new Date(t).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-dig
 const dmk=(a,b)=>[a,b].sort().join('|'),peer=c=>c.split('|').find(x=>x!==me());
 const mg=(a,b)=>{const m={};[...(a||[]),...(b||[])].forEach(x=>{const o=m[x.id];if(!o||(x.u||0)>(o.u||0))m[x.id]=x});return Object.values(m)};
 const uid=p=>p+now()+Math.random().toString(36).slice(2,5);
-const av=(u,s=36)=>{const p=WS.profiles[u]||{};return p.av?`<img src="${p.av}" style="width:${s}px;height:${s}px" class="rounded-full object-cover shrink-0">`:`<span style="width:${s}px;height:${s}px" class="rounded-full gold-gradient text-zinc-950 font-black flex items-center justify-center shrink-0 text-xs">${esc((nm(u)||'?')[0])}</span>`};
+const ring=(u)=>{const st=((WS.profiles[u]||{}).st||'آنلاین');return st==='مشغول'?'busy':st==='مرخصی'?'leave':'online'};
+const av=(u,s=36)=>{const p=WS.profiles[u]||{};const inner=p.av?`<img src="${p.av}" style="width:${s}px;height:${s}px" class="rounded-full object-cover shrink-0">`:`<span style="width:${s}px;height:${s}px" class="rounded-full gold-gradient text-zinc-950 font-black flex items-center justify-center shrink-0 text-xs">${esc((nm(u)||'?')[0])}</span>`;return `<span class="mg-avatar-wrap ${ring(u)}">${inner}</span>`};
 function save(){if(JSON.stringify(WS.msgs).length>3.5e6){WS.msgs.filter(m=>m.data&&!m.gone).sort((a,b)=>a.t-b.t).slice(0,Math.ceil(WS.msgs.length/3)).forEach(m=>{m.data='';m.gone=1;m.u=now()})}try{localStorage.setItem(K,JSON.stringify(WS))}catch(e){}saveState()}
 const un=c=>WS.msgs.filter(m=>!m.del&&m.c===c&&m.from!==me()&&m.t>(R[c]||0)).length;
 const convs=()=>['all',...US().filter(u=>u.username!==me()).map(u=>dmk(me(),u.username))];
@@ -6266,7 +7073,8 @@ function clH(m){const mineTo=m.to===me(),all=m.items.every(i=>i.d);let b='';
  return `<div class="space-y-1 text-xs"><b>☑️ چک‌لیست (${esc(nm(m.from))} ← ${esc(nm(m.to))})</b>${m.items.map((i,x)=>`<label class="flex items-center gap-2"><input type="checkbox" data-ci="${m.id}:${x}" ${i.d?'checked':''} ${m.st==='acc'&&mineTo?'':'disabled'} class="accent-amber-500"><span class="${i.d?'line-through opacity-60':''}">${esc(i.t)}</span></label>`).join('')}<div class="text-[11px] font-bold text-gold-700 dark:text-gold-300">${lab}</div><div class="flex gap-1.5">${b}</div></div>`}
 // ===== chat
 function msgH(m){const mine=m.from===me();let c='';
- if(m.type==='text')c=`<span class="whitespace-pre-wrap">${esc(m.txt)}</span>`;
+ if(m.type==='text')c=`<span class="whitespace-pre-wrap">${esc(m.txt)}</span><button type="button" data-msg-task="${m.id}" class="mg-task-btn">+ کار</button>`;
+ else if(m.type==='card')c=`<div class="mg-card-chip text-xs"><b>${esc(m.cust||'')}</b><div dir="ltr">${esc(m.phone||'')}</div><div>${esc(m.status||'')}</div>${m.customerId?`<button type="button" data-open-dossier="${m.customerId}" class="mt-1 px-2 py-1 rounded-lg gold-gradient text-zinc-950 text-[11px] font-black">باز کردن پرونده</button>`:''}</div>`;
  else if(m.gone)c='<i class="opacity-60">(رسانه قدیمی حذف شد)</i>';
  else if(m.type==='img')c=`<img src="${m.data}" class="rounded-xl max-h-60">`;
  else if(m.type==='voice')c=`<audio controls src="${m.data}" class="max-w-full h-9"></audio>`;
@@ -6378,8 +7186,38 @@ window.wsInit=function(){if(ready)return;ready=1;
   if(c.id==='wc-file'&&c.files[0]){const f=c.files[0];c.value='';if(/^image\//.test(f.type))img(f,900,d=>send({type:'img',data:d}));else if(f.size>150*1024)showToast('حداکثر حجم فایل ۱۵۰ کیلوبایت','info');else rd(f,d=>send({type:'file',data:d,name:f.name}))}
   if(c.id==='wp-av'&&c.files[0])img(c.files[0],160,d=>prof({av:d}))});
  T.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='wc-txt')sendTxt()});
- function sendTxt(){const i=g('wc-txt'),v=i.value.trim();if(!v)return;i.value='';send({type:'text',txt:v})}
- const cb=g('cdm-tier-badge');if(cb)cb.insertAdjacentHTML('afterend','<button id="ws-cdm-ref" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-500/20 text-indigo-700 dark:text-indigo-300">ارجاع به همکار</button>');
+ function sendTxt(){const i=g('wc-txt'),v=i.value.trim();if(!v)return;i.value='';hideMention();send({type:'text',txt:v})}
+ function hideMention(){const m=g('mg-mention');if(m)m.remove()}
+ function showMention(q,anchor){
+  hideMention();const box=document.createElement('div');box.id='mg-mention';box.className='mg-mention glass-strong';
+  const custs=state.customers.filter(c=>fuzzyMatch(`${c.name} ${c.phone} ${c.company||''}`,q)).slice(0,6);
+  const quotes=state.quotes.filter(x=>fuzzyMatch(`${x.productName} ${x.supplier}`,q)).slice(0,4);
+  if(!custs.length&&!quotes.length){box.innerHTML='<div class="p-2 text-xs text-zinc-500">موردی نیست</div>'}
+  else{
+   box.innerHTML=[...custs.map(c=>`<button type="button" data-mn-cust="${c.id}" class="w-full text-right px-2.5 py-2 rounded-xl hover:bg-gold-500/15 text-xs"><b>${esc(c.name)}</b><div class="opacity-70">${esc(c.phone)}</div></button>`),
+   ...quotes.map(x=>`<button type="button" data-mn-quote="${esc(x.productName)}" class="w-full text-right px-2.5 py-2 rounded-xl hover:bg-emerald-500/15 text-xs"><b>${esc(x.productName)}</b><div class="opacity-70">${formatPrice(x.price)} تومان</div></button>`)].join('');
+  }
+  document.body.appendChild(box);
+  const r=anchor.getBoundingClientRect();
+  box.style.left=Math.max(8,r.left)+'px';box.style.bottom=(window.innerHeight-r.top+8)+'px';box.style.width=Math.min(320,window.innerWidth-16)+'px';
+ }
+ g('wc-txt')&&g('wc-txt').addEventListener('input',e=>{
+  const v=e.target.value,m=v.match(/#([^\s#]*)$/);
+  if(m)showMention(m[1],e.target);else hideMention();
+ });
+ document.addEventListener('click',e=>{
+  const mt=e.target.closest('[data-msg-task]');
+  if(mt){const id=mt.getAttribute('data-msg-task'),msg=WS.msgs.find(x=>x.id===id);if(!msg||!msg.txt)return;
+   WS.tasks.push({id:uid('t'),title:msg.txt.slice(0,80),note:msg.txt,from:me(),to:me(),due:getSystemJalaliDate(0),pri:1,st:'n',t:now(),u:now()});save();showToast('پیام به کارهای امروز اضافه شد');if(typeof renderHomeHub==='function')renderHomeHub();return rT()}
+  const mc=e.target.closest('[data-mn-cust]');
+  if(mc){const c=state.customers.find(x=>x.id===mc.getAttribute('data-mn-cust'));hideMention();const i=g('wc-txt');if(i)i.value=i.value.replace(/#[^\s#]*$/,'');
+   if(c){send({type:'card',cust:c.name,phone:c.phone,status:getCustomerHealth(c)+' • '+(c.company||'مشتری'),customerId:c.id});showToast('کارت پرونده در گپ ثبت شد')}return}
+  const mq=e.target.closest('[data-mn-quote]');
+  if(mq){const name=mq.getAttribute('data-mn-quote');const q=state.quotes.find(x=>x.productName===name);hideMention();const i=g('wc-txt');if(i)i.value=i.value.replace(/#[^\s#]*$/,'');
+   if(q){send({type:'card',cust:q.productName,phone:q.supplier,status:'کف قیمت '+formatPrice(q.price)+' تومان'});showToast('کارت قیمت در گپ ثبت شد')}return}
+  if(!e.target.closest('#mg-mention')&&!e.target.closest('#wc-txt'))hideMention();
+ });
+ const cb=g('cdm-tier-badge');if(cb&&!g('ws-cdm-ref'))cb.insertAdjacentHTML('afterend','<button id="ws-cdm-ref" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-500/20 text-indigo-700 dark:text-indigo-300">ارجاع به همکار</button>');
  document.addEventListener('click',e=>{if(e.target.id==='ws-cdm-ref')wsRefer({cust:(g('cdm-name').textContent||'').trim()});const a=e.target.closest('[data-ca]');if(a){const[x,...p]=a.dataset.ca.split(':');catAct(x,p.join(':'))}});
  anc();wsOnUser();refF();mcList();setInterval(()=>{if(state.activeTab==='work'&&sub==='c'&&!document.activeElement.closest('#ws-c'))render()},0x7fffffff)};
 })();

