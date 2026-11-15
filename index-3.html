@@ -634,9 +634,22 @@
     @media (max-width: 1023px) {
       #app-header h1 { font-size: 0 !important; }
       #app-header h1::after { content: 'مشهد گستر'; font-size: 16px; font-weight: 900; }
-      #btn-toggle-3d, #v5-today-ticker { display: none !important; }
+      #btn-toggle-3d, #v5-today-ticker, #btn-top-excel, #btn-hold-mode, #btn-n8n-sync-now, #app-header .vs-spring-toggle { display: none !important; }
+      #btn-open-search { min-width: 40px; padding-left: 8px; padding-right: 8px; }
+      #btn-logout-user .mg-hide-sm, #btn-logout-user span:not(#current-user-badge) { display: none !important; }
+      #current-user-badge { max-width: 5.5rem; }
       #app-search { display: none; }
+      #app-header-actions { flex: 0 0 auto !important; justify-content: flex-end !important; gap: 6px !important; }
+      #app-brand { flex: 1 1 auto; }
       .mg-page { min-height: calc(100dvh - 168px); }
+      #mg-fab { z-index: 55; }
+      #mg-fab .mg-fab-menu { z-index: 56; }
+      #mg-fab .mg-fab-menu button {
+        background: var(--bg-glass-strong);
+        border: 1px solid var(--border-gold);
+        box-shadow: var(--shadow-glass);
+        color: var(--text-main);
+      }
     }
     @media print {
       #mg-mobile-shell, #mg-tabbar { display: none !important; }
@@ -2333,6 +2346,7 @@
         <h2 class="text-lg font-black">یک رمز قوی برای حساب خود بگذارید</h2>
         <p class="text-xs text-zinc-500">حداقل ۱۰ کاراکتر، شامل حرف و عدد. تا وقتی عوض نشود، داده‌های سرور باز نمی‌شوند.</p>
       </div>
+      <input id="mc-username-hidden" name="username" type="text" autocomplete="username" class="sr-only" tabindex="-1" aria-hidden="true" />
       <input id="mc-new-pass" type="password" dir="ltr" required minlength="10" autocomplete="new-password" placeholder="رمز جدید" class="w-full px-4 py-3 rounded-2xl bg-cream-100 dark:bg-zinc-900 border border-gold-500/40 font-black text-left focus:outline-none focus:ring-2 focus:ring-gold-500" />
       <input id="mc-new-pass2" type="password" dir="ltr" required minlength="10" autocomplete="new-password" placeholder="تکرار رمز جدید" class="w-full px-4 py-3 rounded-2xl bg-cream-100 dark:bg-zinc-900 border border-gold-500/40 font-black text-left focus:outline-none focus:ring-2 focus:ring-gold-500" />
       <div id="mc-pass-error" class="hidden p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-bold text-center"></div>
@@ -2907,10 +2921,14 @@
         if (meta) meta.setAttribute('content', dark ? '#090A0F' : '#F5F2EB');
       }
       function toggleTheme() {
-        applyTheme(!document.documentElement.classList.contains('dark'));
-        if (state.activeTab === 'radar') renderRadarCharts();
-        if (state.activeTab === 'pricestudio') renderPriceStudioCard();
-        if (typeof refreshLiveTicker === 'function') refreshLiveTicker();
+        const next = !document.documentElement.classList.contains('dark');
+        applyTheme(next);
+        try {
+          if (state.activeTab === 'radar') renderRadarCharts();
+          if (state.activeTab === 'pricestudio') renderPriceStudioCard();
+          if (typeof refreshLiveTicker === 'function') refreshLiveTicker();
+        } catch (e) {}
+        showToast(next ? 'حالت شب فعال شد' : 'حالت روز فعال شد', 'info');
       }
 
       let hubPane = 'follow';
@@ -4275,6 +4293,8 @@
 
         const gearPanel = document.getElementById('cdm-panel-gear');
         if (gearPanel) {
+          // اگر معامله‌های قطعی بدون کارت گارانتی مانده‌اند، همین‌جا بساز
+          state.deals.filter(d => d.customerId === c.id && d.stage === 'won' && !d.isServiceAlarm).forEach(d => ensureWarrantyForDeal(d));
           const eqs = Array.isArray(c.equipment) ? c.equipment : [];
           if (!eqs.length) {
             gearPanel.innerHTML = `<div class="p-6 rounded-2xl bg-cream-100 dark:bg-zinc-900 text-center text-xs font-bold text-zinc-500">هنوز تجهیزی برای گارانتی ثبت نشده. با انتقال معامله به خرید قطعی ساخته می‌شود.</div>`;
@@ -4926,19 +4946,33 @@
         document.getElementById('hold-customer')?.addEventListener('change', refreshHoldPanels);
         document.getElementById('hold-price-q')?.addEventListener('input', refreshHoldPanels);
         document.getElementById('mg-undo-btn')?.addEventListener('click', cancelUndo);
-        document.getElementById('mg-fab-main')?.addEventListener('click', () => {
+        document.getElementById('mg-fab-main')?.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
           const fab = document.getElementById('mg-fab');
-          fab.classList.toggle('is-open');
-          fab.querySelector('.mg-fab-menu').classList.toggle('hidden');
+          const menu = fab.querySelector('.mg-fab-menu');
+          const open = !fab.classList.contains('is-open');
+          fab.classList.toggle('is-open', open);
+          menu.classList.toggle('hidden', !open);
         });
-        document.querySelectorAll('[data-fab]').forEach(btn => btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-fab]').forEach(btn => btn.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
           const act = btn.getAttribute('data-fab');
-          document.getElementById('mg-fab').classList.remove('is-open');
-          document.querySelector('#mg-fab .mg-fab-menu')?.classList.add('hidden');
+          const fab = document.getElementById('mg-fab');
+          fab.classList.remove('is-open');
+          fab.querySelector('.mg-fab-menu')?.classList.add('hidden');
           if (act === 'missed') { switchMainTab('home'); setHubPane('book'); }
           if (act === 'quote') switchMainTab('pricestudio');
           if (act === 'hold') openHoldMode();
         }));
+        document.addEventListener('click', e => {
+          const fab = document.getElementById('mg-fab');
+          if (!fab || !fab.classList.contains('is-open')) return;
+          if (e.target.closest('#mg-fab')) return;
+          fab.classList.remove('is-open');
+          fab.querySelector('.mg-fab-menu')?.classList.add('hidden');
+        });
         document.querySelectorAll('[data-hub]').forEach(btn => btn.addEventListener('click', () => setHubPane(btn.getAttribute('data-hub'))));
         document.getElementById('hub-mc-form')?.addEventListener('submit', e => {
           e.preventDefault();
@@ -6451,6 +6485,12 @@
           renderUsersManagementList();
         }
 
+        function landAfterAuth() {
+          const isAdmin = currentUser && currentUser.role === 'admin';
+          const target = (!isAdmin || !state.activeTab || state.activeTab === 'radar' && !isAdmin) ? 'home' : (state.activeTab || 'home');
+          if (typeof switchMainTab === 'function') switchMainTab(document.getElementById('view-' + target) ? target : 'home');
+        }
+
         function renderUsersManagementList() {
           const container = document.getElementById('users-list-container');
           if (!container) return;
@@ -6558,6 +6598,11 @@ function strongPassword(pw) {
           const login = document.getElementById('auth-login-modal');
           login.classList.add('hidden');
           login.classList.remove('flex');
+          const hiddenUser = document.getElementById('mc-username-hidden');
+          if (hiddenUser && currentUser) hiddenUser.value = currentUser.username || '';
+          const badge = document.getElementById('current-user-badge');
+          if (badge && currentUser) badge.textContent = `${currentUser.role === 'admin' ? '👑' : '🎧'} ${currentUser.displayName}`;
+          window.__me = currentUser;
         }
 
         function hideMustChange() {
@@ -6708,6 +6753,7 @@ function strongPassword(pw) {
             }
             applyRolePermissionsUI();
             await pullStateFromServer(true);
+            landAfterAuth();
           } catch (e) {}
         }
 
@@ -6749,6 +6795,7 @@ function strongPassword(pw) {
                 applyRolePermissionsUI();
                 showToast('خوش آمدید ' + data.user.displayName);
                 await pullStateFromServer(true);
+                landAfterAuth();
                 return;
               }
               if (res.status === 401) {
@@ -6768,6 +6815,7 @@ function strongPassword(pw) {
           rememberUser(matched);
           applyRolePermissionsUI();
           showToast('خوش آمدید ' + matched.displayName);
+          landAfterAuth();
         });
 
         document.getElementById('must-change-form').addEventListener('submit', async e => {
@@ -6801,6 +6849,7 @@ function strongPassword(pw) {
             applyRolePermissionsUI();
             showToast('رمز جدید ذخیره شد');
             await pullStateFromServer(true);
+            landAfterAuth();
           } catch (err2) {
             err.textContent = 'ارتباط با سرور قطع است';
             err.classList.remove('hidden');
