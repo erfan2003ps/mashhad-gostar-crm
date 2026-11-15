@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('mg-theme');
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', dark);
+        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+      } catch (e) {}
+    })();
+  </script>
   <meta name="theme-color" content="#F5F2EB" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#090A0F" media="(prefers-color-scheme: dark)" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -575,7 +585,54 @@
       form button, .app-modal button { min-height: 44px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .animate-view, .modal-spring, .holo-shimmer::after { animation: none !important; }
+      .animate-view, .modal-spring, .holo-shimmer::after, .mg-enter, .mg-ticker-track, .mg-fab-menu { animation: none !important; transition: none !important; }
+    }
+    html { color-scheme: light; }
+    html.dark { color-scheme: dark; }
+    html.dark body { background-color: #090A0F; color: #F4F3EF; }
+    html:not(.dark) body { background-color: #F5F2EB; color: #18181B; }
+    #invoice-a5-paper, #invoice-a5-paper * { color: #18181b; }
+    @keyframes mgPage {
+      from { opacity: 0; transform: translateY(22px) scale(0.985); filter: blur(8px); }
+      to { opacity: 1; transform: none; filter: none; }
+    }
+    .tab-section.mg-enter { animation: mgPage 0.46s cubic-bezier(0.16, 1, 0.3, 1); }
+    .mg-duebar { height: 5px; border-radius: 99px; background: rgba(120,113,108,.18); overflow: hidden; }
+    .mg-duebar > span { display: block; height: 100%; border-radius: 99px; transition: width .4s ease; }
+    .mg-hub-btn, .nav-tab-btn, #mg-fab button { transition: transform .22s cubic-bezier(.16,1,.3,1), background-color .2s, color .2s, box-shadow .2s; }
+    .mg-hub-btn:active, .nav-tab-btn:active, #mg-fab button:active { transform: scale(.94); }
+    .mg-hub-pane { animation: viewEntrance .32s cubic-bezier(.16,1,.3,1); }
+    .mg-avatar { border-radius: 999px; }
+    .mg-mention, #mg-cmd, #hold-modal .modal-spring, #mg-undo {
+      background: var(--bg-glass-strong);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+    }
+    #mg-mention { position: fixed; z-index: 240; max-height: 240px; overflow: auto; border-radius: 18px; border: 1px solid var(--border-gold); box-shadow: var(--shadow-glass); padding: 6px; }
+    #mg-cmd { z-index: 240; }
+    #mg-undo { z-index: 260; left: 12px; right: 12px; bottom: calc(96px + env(safe-area-inset-bottom)); }
+    @media (min-width: 1024px) { #mg-undo { left: auto; right: 24px; width: min(440px, 40vw); bottom: 24px; } }
+    .mg-ticker { overflow: hidden; }
+    .mg-ticker-track { display: flex; gap: 22px; width: max-content; animation: mgMarquee 36s linear infinite; }
+    @keyframes mgMarquee { from { transform: translateX(8%); } to { transform: translateX(-50%); } }
+    .mg-tick { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 12px; font-weight: 800; }
+    .mg-tick i { width: 8px; height: 8px; border-radius: 99px; display: inline-block; }
+    #mg-fab { position: fixed; z-index: 45; left: 16px; bottom: calc(92px + env(safe-area-inset-bottom)); }
+    #mg-fab-main { width: 58px; height: 58px; border-radius: 999px; font-size: 32px; line-height: 1; box-shadow: 0 12px 30px rgba(197,160,89,.45); }
+    .mg-fab-menu { position: absolute; bottom: 68px; left: 0; display: flex; flex-direction: column; gap: 8px; transform-origin: bottom left; }
+    .mg-fab-menu button { min-height: 44px; border-radius: 16px; padding: 8px 12px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+    #mg-fab.is-open .mg-fab-menu { animation: mgFan .28s cubic-bezier(.16,1,.3,1); }
+    @keyframes mgFan { from { opacity: 0; transform: translateY(10px) scale(.9); } to { opacity: 1; transform: none; } }
+    .mg-task-btn { font-size: 11px; font-weight: 800; border-radius: 999px; padding: 2px 8px; background: rgba(197,160,89,.2); }
+    .mg-card-chip { border: 1px solid var(--border-gold); border-radius: 16px; padding: 8px 10px; margin-top: 6px; background: rgba(197,160,89,.08); }
+    #hold-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 900px) { #hold-grid { grid-template-columns: 1.1fr .9fr 1fr; } }
+    @media (max-width: 1023px) {
+      #app-header h1 { font-size: 0 !important; }
+      #app-header h1::after { content: 'مشهد گستر'; font-size: 16px; font-weight: 900; }
+      #btn-toggle-3d, #v5-today-ticker { display: none !important; }
+      #app-search { display: none; }
+      .mg-page { min-height: calc(100dvh - 168px); }
     }
     @media print {
       #mg-mobile-shell, #mg-tabbar { display: none !important; }
@@ -633,9 +690,12 @@
 
       <!-- Desktop Glass Navigation Tabs (5 Complete Modules) -->
       <nav class="hidden lg:flex items-center bg-cream-200/60 dark:bg-zinc-900/80 p-1.5 rounded-2xl border border-gold-500/25 gap-1">
-        <button data-tab="radar" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5">
+        <button data-tab="home" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5">
+          <span>خانه</span>
+        </button>
+        <button data-tab="radar" class="nav-tab-btn hidden mg-admin-only px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-          <span>رادار و آلارم‌های امروز</span>
+          <span>گزارش مدیر</span>
         </button>
         <button data-tab="club" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
@@ -674,6 +734,8 @@
           <span class="sm:hidden">اکسل</span>
         </button>
         <button id="btn-toggle-3d" title="فعال/غیرفعال کردن موتور سه‌بعدی" class="p-2.5 rounded-xl bg-cream-200/80 dark:bg-zinc-800 text-xs font-black gold-gradient text-zinc-950 transition">3D</button>
+        <button id="btn-hold-mode" type="button" title="حالت پشت خط مشتری" class="px-3 py-2 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-black">پشت خط</button>
+        <button id="btn-open-search" type="button" title="جستجو (Ctrl+K)" class="p-2.5 rounded-xl bg-cream-200/80 dark:bg-zinc-800 text-xs font-black">جستجو</button>
         <button id="btn-toggle-theme" title="تغییر تم شیشه‌ای روشن / تیره لوکس" class="p-2.5 rounded-xl bg-cream-200/80 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:bg-gold-500/20 transition">
           <svg class="w-5 h-5 hidden dark:block text-gold-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
           <svg class="w-5 h-5 block dark:hidden text-zinc-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -706,13 +768,86 @@
       </div>
     </div>
 
+    <section id="view-home" class="tab-section hidden mg-page space-y-4">
+      <div class="glass-panel rounded-3xl p-4 sm:p-5">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <p class="text-xs font-bold text-gold-700 dark:text-gold-300">وب‌اپ مشهد گستر</p>
+            <h2 class="text-lg font-black">کارهای امروز</h2>
+          </div>
+          <div class="text-left">
+            <p id="home-date" class="text-xs font-black"></p>
+            <button type="button" id="btn-home-reports" class="hidden mg-admin-only mt-1 px-3 py-1.5 rounded-xl gold-gradient text-zinc-950 text-xs font-black">گزارش مدیر</button>
+          </div>
+        </div>
+        <div id="home-today" class="mt-3 flex gap-2 overflow-x-auto pb-1"></div>
+      </div>
+
+      <div class="glass-panel rounded-3xl p-4 sm:p-5 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-base font-black">مرکز پیگیری</h3>
+          <span class="text-xs text-zinc-500">بی‌پاسخ، پرونده و ثبت پیگیری</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button type="button" data-hub="follow" class="mg-hub-btn px-3 py-3 rounded-2xl text-xs font-black min-h-[48px]">پیگیری‌ها</button>
+          <button type="button" data-hub="book" class="mg-hub-btn px-3 py-3 rounded-2xl text-xs font-black min-h-[48px]">دفترچه تلفن</button>
+          <button type="button" data-hub="new" class="mg-hub-btn px-3 py-3 rounded-2xl text-xs font-black min-h-[48px]">ثبت پیگیری</button>
+          <button type="button" data-hub="file" class="mg-hub-btn px-3 py-3 rounded-2xl text-xs font-black min-h-[48px]">پرونده‌ها</button>
+        </div>
+        <div id="hub-follow" class="mg-hub-pane space-y-2">
+          <div id="hub-alarms" class="space-y-2 max-h-[28rem] overflow-y-auto"></div>
+        </div>
+        <div id="hub-book" class="mg-hub-pane hidden space-y-2">
+          <form id="hub-mc-form" class="grid grid-cols-1 sm:grid-cols-3 gap-2" novalidate>
+            <input id="hub-mc-phone" type="tel" dir="ltr" required placeholder="شماره" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-black text-right" />
+            <input id="hub-mc-title" required placeholder="نام یا موضوع" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold" />
+            <button type="submit" class="px-3 py-2 rounded-xl gold-gradient text-zinc-950 font-black min-h-[44px]">ثبت در دفترچه</button>
+          </form>
+          <div id="hub-missed-list" class="space-y-2 max-h-80 overflow-y-auto"></div>
+          <div id="hub-mc-done"></div>
+        </div>
+        <div id="hub-new" class="mg-hub-pane hidden">
+          <form id="hub-fu-form" class="grid grid-cols-1 sm:grid-cols-2 gap-2" novalidate>
+            <input id="hub-fu-name" required placeholder="نام مشتری" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold" />
+            <input id="hub-fu-phone" type="tel" dir="ltr" required placeholder="شماره تماس" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-black text-right" />
+            <input id="hub-fu-title" required placeholder="موضوع پیگیری" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold sm:col-span-2" />
+            <input id="hub-fu-amount" inputmode="numeric" placeholder="مبلغ، اگر معلوم است" class="px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold" />
+            <button type="submit" class="px-3 py-2 rounded-xl emerald-gradient text-white font-black min-h-[48px]">ثبت در قیف و پیگیری</button>
+          </form>
+        </div>
+        <div id="hub-file" class="mg-hub-pane hidden space-y-2">
+          <input id="hub-file-q" placeholder="جستجوی پرونده مشتری" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold" />
+          <div id="hub-files" class="space-y-2 max-h-80 overflow-y-auto"></div>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-3xl p-4 sm:p-5 space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-black">گپ تیمی</h3>
+          <button type="button" data-tab="work" class="nav-tab-btn text-xs font-black text-gold-700 dark:text-gold-300">گفتگوی کامل</button>
+        </div>
+        <div id="home-chat-msgs" class="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1"></div>
+        <div class="flex items-center gap-2">
+          <input id="home-chat-txt" class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gold-500/30 font-bold" placeholder="پیام بنویسید، برای پرونده # بزنید" enterkeyhint="send" />
+          <button id="home-chat-send" type="button" class="px-4 py-2 rounded-xl gold-gradient text-zinc-950 font-black min-h-[44px]">ارسال</button>
+        </div>
+      </div>
+    </section>
+
     <!-- ===================================================== -->
     <!-- TAB 1: EXECUTIVE RADAR & DASHBOARD (رادار و داشبورد)   -->
     <!-- ===================================================== -->
-    <section id="view-radar" class="tab-section animate-view space-y-6">
+    <section id="view-radar" class="tab-section hidden animate-view mg-page space-y-6">
+      <div class="mg-ticker glass-panel rounded-2xl px-3 py-2">
+        <div id="mg-ticker-track" class="mg-ticker-track"></div>
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-base font-black">رادار پیگیری</h2>
+        <button type="button" id="btn-hold-radar" class="px-3 py-2 rounded-xl emerald-gradient text-white text-xs font-black min-h-[44px]">حالت پشت خط مشتری</button>
+      </div>
       
-      <!-- 4 Glass KPI Cards -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
+      <!-- 4 Glass KPI Cards (مدیر) -->
+      <div id="radar-reports" class="hidden mg-admin-only grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
         <div class="glass-panel rounded-3xl p-4 sm:p-5">
           <div class="flex items-start justify-between">
             <div>
@@ -844,7 +979,7 @@
       </div>
 
       <!-- 4 Executive CRM & Loyalty Charts -->
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+      <div class="hidden mg-admin-only grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
         <div class="glass-panel rounded-3xl p-5">
           <h4 class="text-sm font-extrabold mb-1">قیف فروش و مراحل معاملات</h4>
           <p class="text-[11px] text-zinc-500 mb-3">تعداد پرونده‌ها در هر مرحله از قیف</p>
@@ -1578,9 +1713,9 @@
   <!-- ===================================================== -->
   <nav id="mg-tabbar" class="lg:hidden" aria-label="ناوبری اصلی">
     <div class="mg-tabbar-inner glass-strong">
-      <button data-tab="radar" class="nav-tab-btn" type="button">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5m0 14h16M8 16v-5m4 5V8m4 8v-3"/></svg>
-        <span>رادار</span>
+      <button data-tab="home" class="nav-tab-btn" type="button">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10.5L12 4l8 6.5V20a1 1 0 01-1 1h-5v-6H10v6H5a1 1 0 01-1-1v-9.5z"/></svg>
+        <span>خانه</span>
       </button>
       <button data-tab="club" class="nav-tab-btn" type="button">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l2.2 4.6L19 8.2l-3.5 3.4.8 4.9L12 14.8 7.7 16.5l.8-4.9L5 8.2l4.8-.6L12 3z"/></svg>
@@ -1596,15 +1731,19 @@
       </button>
       <button data-tab="work" class="nav-tab-btn" type="button">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M6 18l-2 3V6a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H6z"/></svg>
-        <span>کار</span>
+        <span>گپ</span>
         <b class="ws-nb hidden px-1 rounded-full bg-rose-600 text-white"></b>
-      </button>
-      <button data-tab="automation" class="nav-tab-btn" type="button">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m-4-4h8M4 7h16v10H4z"/></svg>
-        <span>ابزار</span>
       </button>
     </div>
   </nav>
+  <div id="mg-fab" class="lg:hidden">
+    <div class="mg-fab-menu hidden">
+      <button type="button" data-fab="missed" class="glass-strong">ثبت تماس بی‌پاسخ</button>
+      <button type="button" data-fab="quote" class="glass-strong">استعلام قیمت سریع</button>
+      <button type="button" data-fab="hold" class="glass-strong">پشت خط مشتری</button>
+    </div>
+    <button id="mg-fab-main" type="button" class="gold-gradient text-zinc-950 font-black" aria-label="میانبرها">+</button>
+  </div>
 
   <!-- ===================================================== -->
   <!-- MODAL 1: RECORD PURCHASE / ADD LOYALTY POINTS         -->
@@ -1830,10 +1969,11 @@
       </div>
 
       <!-- Segmented 3 Tabs inside Customer Dossier -->
-      <div class="grid grid-cols-3 gap-2 bg-cream-200/70 dark:bg-zinc-900 p-1.5 rounded-2xl border border-gold-500/25">
-        <button type="button" data-cdm-tab="stages" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-black gold-gradient text-zinc-950">۱. پیگیری‌ها و مراحل قیف فروش</button>
-        <button type="button" data-cdm-tab="invoices" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300">۲. بایگانی فاکتورهای مشتری</button>
-        <button type="button" data-cdm-tab="chats" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300">۳. تاریخچه مکالمات و رویدادها</button>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-cream-200/70 dark:bg-zinc-900 p-1.5 rounded-2xl border border-gold-500/25">
+        <button type="button" data-cdm-tab="stages" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-black gold-gradient text-zinc-950">پیگیری</button>
+        <button type="button" data-cdm-tab="invoices" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300">فاکتور</button>
+        <button type="button" data-cdm-tab="chats" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300">گفتگو</button>
+        <button type="button" data-cdm-tab="gear" class="cdm-tab-btn py-2.5 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300">گارانتی</button>
       </div>
 
       <div id="cdm-panel-stages" class="space-y-3 max-h-96 overflow-y-auto pr-1"></div>
@@ -1845,7 +1985,56 @@
         </div>
         <div id="cdm-chats-list" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
       </div>
+      <div id="cdm-panel-gear" class="hidden space-y-3 max-h-96 overflow-y-auto pr-1"></div>
     </div>
+  </div>
+
+  <div id="hold-modal" class="app-modal fixed inset-0 z-[160] bg-zinc-950/70 backdrop-blur-xl hidden items-center justify-center p-3 overflow-y-auto">
+    <div class="modal-spring glass-strong rounded-3xl w-full max-w-5xl p-4 sm:p-6 border-2 border-gold-500/50 space-y-4 my-auto">
+      <div class="flex items-center justify-between gap-2">
+        <div>
+          <p class="text-xs font-black text-emerald-600 dark:text-emerald-300">حالت پشت خط مشتری</p>
+          <h3 class="text-lg font-black">مکالمه زنده</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="hold-timer" class="px-3 py-1.5 rounded-xl bg-zinc-900 text-gold-400 font-black text-sm">۰۰:۰۰</span>
+          <button type="button" id="btn-hold-close" class="px-3 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-xs font-bold">بستن</button>
+        </div>
+      </div>
+      <div id="hold-grid">
+        <div class="space-y-2">
+          <label class="text-xs font-black">مشتری یا شماره</label>
+          <select id="hold-customer" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-gold-500/30 font-bold"></select>
+          <input id="hold-phone" type="tel" dir="ltr" placeholder="شماره جدید" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-gold-500/30 font-black text-right" />
+          <div id="hold-last" class="p-3 rounded-2xl bg-cream-100/80 dark:bg-zinc-900 text-xs space-y-1"></div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs font-black">کف قیمت روز</label>
+          <input id="hold-price-q" placeholder="جستجوی کالا" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-gold-500/30 font-bold" />
+          <div id="hold-prices" class="space-y-1.5 max-h-64 overflow-y-auto"></div>
+        </div>
+        <div class="space-y-2 flex flex-col">
+          <label class="text-xs font-black">یادداشت مکالمه</label>
+          <textarea id="hold-note" rows="6" placeholder="خلاصه حرف مشتری..." class="w-full flex-1 px-3 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-gold-500/30 font-bold"></textarea>
+          <button type="button" id="btn-hold-save" class="w-full py-3 rounded-xl emerald-gradient text-white font-black min-h-[48px]">ثبت و پایان تماس</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mg-cmd" class="fixed inset-0 hidden items-start justify-center p-4 pt-[12vh] bg-zinc-950/55">
+    <div class="modal-spring glass-strong rounded-3xl w-full max-w-xl border-2 border-gold-500/50 overflow-hidden">
+      <input id="mg-cmd-input" class="w-full px-4 py-4 bg-transparent font-bold text-base focus:outline-none" placeholder="جستجوی مشتری، معامله، استعلام..." />
+      <div id="mg-cmd-list" class="max-h-80 overflow-y-auto p-2 space-y-1"></div>
+    </div>
+  </div>
+
+  <div id="mg-undo" class="fixed hidden glass-strong rounded-2xl border border-gold-500/40 p-3 shadow-2xl">
+    <div class="flex items-center justify-between gap-3">
+      <span id="mg-undo-label" class="text-xs font-black">انجام شد</span>
+      <button type="button" id="mg-undo-btn" class="px-3 py-1.5 rounded-xl gold-gradient text-zinc-950 text-xs font-black min-h-[36px]">بازگردانی</button>
+    </div>
+    <div class="mt-2 h-1.5 rounded-full bg-zinc-300/40 dark:bg-zinc-700 overflow-hidden"><span id="mg-undo-fill" class="block h-full gold-gradient" style="width:100%"></span></div>
   </div>
 
   <!-- ===================================================== -->
@@ -2101,6 +2290,7 @@
         <span class="inline-block px-3 py-0.5 rounded-full text-[11px] font-black bg-gold-500/20 text-gold-600 dark:text-gold-300">ورود امن به سامانه یکپارچه</span>
         <h2 class="text-lg sm:text-xl font-black">سامانه CRM و باشگاه مشتریان «مشهد گستر»</h2>
         <p class="text-xs text-zinc-500 dark:text-zinc-400">لطفاً با نام کاربری و رمز عبور اختصاصی خود وارد شوید</p>
+        <p class="text-xs font-bold text-gold-700 dark:text-gold-300">حساب مدیر: erfan</p>
       </div>
 
       <form id="auth-login-form" class="space-y-3.5 text-xs sm:text-sm" novalidate>
@@ -2708,7 +2898,7 @@
       function switchMainTab(tabName) {
         state.activeTab = tabName;
         if (tabName !== 'work') document.body.classList.remove('mg-chat-open');
-        ['radar', 'club', 'pipeline', 'pricestudio', 'automation', 'work'].forEach(t => {
+        ['home', 'radar', 'club', 'pipeline', 'pricestudio', 'automation', 'work'].forEach(t => {
           const sec = document.getElementById(`view-${t}`);
           if (sec) sec.classList.toggle('hidden', t !== tabName);
         });
@@ -4245,7 +4435,7 @@
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-2">
-              <a href="tel:${mc.phone}" class="px-2.5 py-1 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-xs font-black flex items-center gap-1" dir="ltr">
+              <a href="tel:${mc.phone}" data-mc-call="${mc.id}" class="px-2.5 py-1 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-xs font-black flex items-center gap-1" dir="ltr">
                 📞 ${toPersianNum(mc.phone)}
               </a>
               <div class="flex items-center gap-1">
@@ -5677,6 +5867,7 @@
           }
 
           const isAdmin = currentUser.role === 'admin';
+          document.querySelectorAll('.mg-admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin));
           const adminSec = document.getElementById('admin-users-section');
           const agentSec = document.getElementById('agent-profile-section');
           if (adminSec) adminSec.classList.toggle('hidden', !isAdmin);
