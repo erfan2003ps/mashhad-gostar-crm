@@ -1,0 +1,13 @@
+{
+  "name": "mashhad-gostar-crm",
+  "private": true,
+  "version": "7.2.0",
+  "description": "سامانه CRM مشهد گستر با نشست ورود و داده رمزشده",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node scripts/security-check.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
