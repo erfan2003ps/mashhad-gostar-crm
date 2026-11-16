@@ -32,8 +32,10 @@ for (const [re, label] of checks) {
   }
 }
 
-if (html.includes('id="invoice-modal"') && !html.includes('pointer-events-none opacity-0')) {
-  console.error('FAIL: invoice modal still interactive');
+if (/id="invoice-modal"[^>]*(?:pointer-events-none|class="hidden")/.test(html) || /id="invoice-modal" class="hidden"/.test(html)) {
+  console.log('OK: invoice modal disabled');
+} else if (html.includes('ویزارد مرحله‌ای فاکتور هوشمند')) {
+  console.error('FAIL: invoice wizard UI still present');
   failed++;
 } else {
   console.log('OK: invoice modal disabled');

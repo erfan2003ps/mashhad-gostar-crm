@@ -1597,7 +1597,7 @@
 
       <div>
         <label class="block text-xs font-extrabold mb-1.5">نتیجه تماس امروز / گزارش پیگیری کارشناس فروش:</label>
-        <textarea id="aam-note" rows="2" placeholder="مثال: با مشتری تماس گرفته شد، قیمت تایید شد و درخواست صدور پیش‌فاکتور داشتند..." class="w-full px-3.5 py-2.5 rounded-xl bg-cream-100 dark:bg-zinc-900 border border-zinc-300/80 dark:border-zinc-700 text-xs font-medium"></textarea>
+        <textarea id="aam-note" rows="2" placeholder="مثال: با مشتری تماس گرفته شد، قیمت تایید شد و برای پیگیری بعدی هماهنگ شد..." class="w-full px-3.5 py-2.5 rounded-xl bg-cream-100 dark:bg-zinc-900 border border-zinc-300/80 dark:border-zinc-700 text-xs font-medium"></textarea>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1781,162 +1781,8 @@
     </div>
   </div>
 
-  <!-- ===================================================== -->
-  <!-- MODAL 6: MASHHAD GOSTAR LUXURY GLASS A5 INVOICE STUDIO -->
-  <!-- ===================================================== -->
-  <div id="invoice-modal" class="app-modal fixed inset-0 z-[150] pointer-events-none opacity-0 bg-black/75 backdrop-blur-md hidden items-center justify-center p-2 sm:p-4 overflow-y-auto">
-    <div class="modal-spring max-w-4xl w-full my-auto space-y-4">
-      <div class="no-print glass-strong rounded-2xl p-4 space-y-3 border border-gold-500/45">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <span class="px-3 py-1 rounded-xl gold-gradient text-zinc-950 text-xs font-black">ویزارد مرحله‌ای فاکتور هوشمند A5 مشهد گستر</span>
-            <span id="inv-edit-status-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">فاکتور جدید</span>
-          </div>
-          <div class="flex flex-wrap items-center gap-1.5">
-            <button type="button" id="btn-save-invoice-to-dossier" class="px-3.5 py-2 rounded-xl emerald-gradient text-white text-xs font-black shadow-md">💾 ذخیره فاکتور در پرونده مشتری</button>
-            <button type="button" id="btn-copy-invoice-text" class="px-3.5 py-2 rounded-xl bg-amber-500 text-zinc-950 text-xs font-black shadow-md">📋 دریافت فاکتور به صورت متن (کپی)</button>
-            <button type="button" id="btn-download-invoice-img" class="px-3.5 py-2 rounded-xl gold-gradient text-zinc-950 text-xs font-black shadow-md">📸 دانلود تصویر پیش‌فاکتور (A5 PNG)</button>
-            <button type="button" id="btn-print-invoice-a5" class="px-3 py-2 rounded-xl bg-zinc-800 text-white text-xs font-bold">🖨️ چاپ روی برگه A5</button>
-            <button type="button" id="btn-close-invoice-modal" class="px-3 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-xs font-bold">بستن</button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-2 pt-1">
-          <button type="button" data-inv-step="1" class="inv-step-tab py-2 px-3 rounded-xl text-xs font-black gold-gradient text-zinc-950">گام ۱: انتخاب مشتری و مشخصات</button>
-          <button type="button" data-inv-step="2" class="inv-step-tab py-2 px-3 rounded-xl text-xs font-bold bg-cream-200 dark:bg-zinc-800">گام ۲: افزودن کالا و تغییر قیمت</button>
-          <button type="button" data-inv-step="3" class="inv-step-tab py-2 px-3 rounded-xl text-xs font-bold bg-cream-200 dark:bg-zinc-800">گام ۳: تخفیف و ذخیره نهایی</button>
-        </div>
-
-        <div id="inv-wizard-panel-1" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs pt-1">
-          <div>
-            <label class="font-bold block mb-1">انتخاب مشتری (بارگذاری خودکار پرونده):</label>
-            <select id="inv-customer-select" class="w-full px-3 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35"></select>
-          </div>
-          <div>
-            <label class="font-bold block mb-1">شماره سریال فاکتور:</label>
-            <input id="inv-serial-input" type="text" value="MG-1405-817" class="w-full px-3 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35" />
-          </div>
-          <div class="flex items-end">
-            <button type="button" data-inv-goto="2" class="w-full py-2 rounded-xl gold-gradient text-zinc-950 font-black">مرحله بعد: افزودن کالا و قیمت ⬅</button>
-          </div>
-        </div>
-
-        <div id="inv-wizard-panel-2" class="hidden grid grid-cols-1 sm:grid-cols-4 gap-2.5 text-xs pt-1">
-          <div class="sm:col-span-2">
-            <label class="font-bold block mb-1">انتخاب کالا/خدمات از استودیو قیمت مشهد گستر:</label>
-            <select id="inv-quick-product" class="w-full px-2.5 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35"></select>
-          </div>
-          <div>
-            <label class="font-bold block mb-1">قیمت واحد قابل تغییر (تومان):</label>
-            <input id="inv-custom-unit-price" type="text" placeholder="قیمت واحد..." class="w-full px-2.5 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35" />
-          </div>
-          <div class="flex items-end gap-1.5">
-            <button type="button" id="btn-inv-Quick-add" class="flex-1 py-2 rounded-xl emerald-gradient text-white font-black">+ درج این کالا در فاکتور</button>
-            <button type="button" id="btn-add-invoice-row" class="px-2.5 py-2 rounded-xl bg-zinc-800 text-gold-400 font-bold">+ افزودن ردیف کالا/خدمات</button>
-          </div>
-        </div>
-
-        <div id="inv-wizard-panel-3" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs pt-1">
-          <div>
-            <label class="font-bold block mb-1">تخفیف لحاظ‌شده در پایین برگه (تومان):</label>
-            <input id="inv-discount-input" type="text" value="0" class="w-full px-2.5 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35" />
-          </div>
-          <div>
-            <label class="font-bold block mb-1">شرایط پرداخت و توضیحات پایین برگه:</label>
-            <input id="inv-terms-input" type="text" value="نقدی | اعتبار پیش‌فاکتور: ۲۴ ساعت" class="w-full px-2.5 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35" />
-          </div>
-          <div class="flex items-end gap-1.5">
-            <button type="button" id="btn-save-invoice-step3" class="flex-1 py-2 rounded-xl emerald-gradient text-white font-black">💾 ذخیره در پرونده مشتری</button>
-            <button type="button" id="btn-copy-invoice-step3" class="px-3 py-2 rounded-xl bg-amber-500 text-zinc-950 font-black">📋 کپی متن</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- A5 LUXURY GLASS INVOICE SHEET -->
-      <div id="invoice-a5-paper" class="mx-auto w-full max-w-[560px] rounded-3xl p-6 sm:p-7 text-zinc-900 shadow-2xl relative overflow-hidden" style="background: linear-gradient(145deg, #FDFCFB 0%, #F5F1E6 55%, #EDE6D6 100%); border: 2px solid #C5A059;">
-        <div class="relative z-10 flex items-center justify-between pb-4 border-b-2 border-amber-600/40">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-md" style="background: linear-gradient(135deg, #0F5243 0%, #18181B 100%); border: 1px solid #C5A059;">
-              MG
-            </div>
-            <div>
-              <h2 class="text-lg sm:text-xl font-black tracking-tight text-zinc-900">شرکت مشهد گستر</h2>
-              <p class="text-[11px] font-bold text-amber-800">مرکز تخصصی تامین تجهیزات تاسیساتی، گرمایشی و خدمات مهندسی</p>
-            </div>
-          </div>
-          <div class="text-left space-y-0.5">
-            <span class="inline-block px-3 py-0.5 rounded-full text-[11px] font-black text-white" style="background-color:#0F5243;">پیش‌فاکتور رسمی فروش و خدمات</span>
-            <p class="text-[11px] font-bold text-zinc-600">شماره: <span id="inv-number">MG-1405-817</span></p>
-            <p class="text-[11px] font-bold text-zinc-600">تاریخ: <span id="inv-date">—</span></p>
-          </div>
-        </div>
-
-        <div class="relative z-10 mt-3.5 p-3.5 rounded-2xl grid grid-cols-2 gap-2 text-xs" style="background: rgba(255,255,255,0.78); border: 1px solid rgba(197,160,89,0.45);">
-          <div>
-            <span class="text-zinc-500">خریدار / کارفرما:</span>
-            <strong id="inv-cust-name" class="mr-1 font-black text-zinc-900">—</strong>
-          </div>
-          <div>
-            <span class="text-zinc-500">شماره تماس:</span>
-            <strong id="inv-cust-phone" class="mr-1 font-bold text-zinc-900" dir="ltr">—</strong>
-          </div>
-          <div>
-            <span class="text-zinc-500">مجموعه / پروژه:</span>
-            <strong id="inv-cust-company" class="mr-1 font-bold text-zinc-800">—</strong>
-          </div>
-          <div>
-            <span class="text-zinc-500">سطح باشگاه مشهد گستر:</span>
-            <strong id="inv-cust-tier" class="mr-1 font-black text-amber-800">—</strong>
-          </div>
-        </div>
-
-        <div class="relative z-10 mt-4 rounded-2xl overflow-hidden border border-amber-700/30" style="background: rgba(255,255,255,0.88);">
-          <table class="w-full text-right text-xs">
-            <thead style="background: linear-gradient(90deg, #18181B 0%, #27272A 100%); color: #E7CFA1;">
-              <tr>
-                <th class="py-2.5 px-2 text-center w-8">#</th>
-                <th class="py-2.5 px-2.5">شرح کالا یا خدمات مهندسی مشهد گستر</th>
-                <th class="py-2.5 px-2 text-center w-14">تعداد</th>
-                <th class="py-2.5 px-2.5">فی واحد (تومان)</th>
-                <th class="py-2.5 px-2.5">جمع کل (تومان)</th>
-                <th class="no-print py-2.5 px-1 text-center w-7"></th>
-              </tr>
-            </thead>
-            <tbody id="inv-items-tbody" class="divide-y divide-amber-700/15 text-zinc-800"></tbody>
-          </table>
-        </div>
-
-        <div class="relative z-10 mt-4 grid grid-cols-1 sm:grid-cols-12 gap-3 items-stretch">
-          <div class="sm:col-span-6 p-3 rounded-2xl flex flex-col justify-between text-[11px]" style="background: rgba(255,255,255,0.75); border: 1px solid rgba(197,160,89,0.4);">
-            <div>
-              <span class="font-black text-amber-900 block mb-1">شرایط و توضیحات مشهد گستر:</span>
-              <p id="inv-terms-display" class="text-zinc-700 font-medium leading-relaxed">نقدی | اعتبار پیش‌فاکتور: ۲۴ ساعت</p>
-            </div>
-            <div class="mt-2 pt-2 border-t border-amber-700/20 flex items-center justify-between text-[10px] text-zinc-600 font-bold">
-              <span>مهر و تایید واحد فروش مشهد گستر</span>
-              <span class="px-2 py-0.5 rounded bg-emerald-800 text-white">تایید دیجیتال</span>
-            </div>
-          </div>
-
-          <div class="sm:col-span-6 p-3.5 rounded-2xl space-y-1.5 text-xs" style="background: linear-gradient(135deg, #18181B 0%, #27272A 100%); color: #FFFFFF; border: 1px solid #C5A059;">
-            <div class="flex justify-between text-[11px] text-zinc-300">
-              <span>جمع کل اقلام:</span>
-              <span id="inv-subtotal" class="font-bold">۰ تومان</span>
-            </div>
-            <div class="flex justify-between text-[11px] text-amber-300">
-              <span>تخفیف ویژه لحاظ‌شده:</span>
-              <span id="inv-discount-display" class="font-bold">۰ تومان</span>
-            </div>
-            <div class="pt-1.5 border-t border-white/15 flex justify-between items-baseline">
-              <span class="font-black text-amber-400">مبلغ قابل پرداخت:</span>
-              <span id="inv-grand-total" class="text-base font-black text-emerald-400">۰ تومان</span>
-            </div>
-            <p id="inv-total-words" class="text-[10px] text-zinc-300 pt-0.5">—</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Invoice wizard removed — stub keeps IDs safe for legacy listeners -->
+  <div id="invoice-modal" class="hidden" aria-hidden="true"></div>
 
     <!-- ===================================================== -->
   <!-- MODAL 7: NODE.JS SERVER & USER ACCESS CONTROL (V7) -->
@@ -2283,7 +2129,7 @@
             tags: ['همکار فروشگاهی', 'چکی معتبر'],
             invoices: [],
             timeline: [
-              { date: `${toPersianNum(getSystemJalaliDate(-4))} • ساعت ۱۰:۱۵`, text: 'تسویه فاکتور پکیج بوتان و ثبت سفارش جدید شیرآلات توکار' }
+              { date: `${toPersianNum(getSystemJalaliDate(-4))} • ساعت ۱۰:۱۵`, text: 'تسویه خرید پکیج بوتان و ثبت سفارش جدید شیرآلات توکار' }
             ]
           },
           {
@@ -2339,7 +2185,7 @@
             orderType: 'کالا به همراه خدمات نصب',
             followupDate: getSystemJalaliDate(0),
             createdAtTime: '۰۹:۳۰',
-            notes: 'پیش‌فاکتور صادر شده، منتظر تایید نهایی مدیر مالی پروژه'
+            notes: 'آماده تایید نهایی؛ منتظر تایید مدیر پروژه'
           },
           {
             id: 'deal-202',
@@ -3036,7 +2882,7 @@
           const tier = getTierInfo(pts);
           const health = getCustomerHealth(c);
           const isSelected = c.id === state.selectedCustomerId;
-          const invCount = (c.invoices || []).length;
+          const invCount = (state.serviceReminders || []).filter(s => !s.deleted && (s.customerId === c.id || s.phone === c.phone)).length;
 
           const healthBadgeClass = health === 'وفادار داغ'
             ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
@@ -3200,8 +3046,8 @@
                           <span class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 px-1.5 py-1">تکمیل شده ✅</span>
                         `}
 
-                        <button type="button" data-open-service-alarm="${d.id}" title="صدور پیش‌آلارم سرویس" class="px-2 py-1.5 rounded-lg bg-zinc-900 text-gold-400 text-[10px] font-bold">
-                          🧾 فاکتور
+                        <button type="button" data-open-service-alarm="${d.id}" title="ثبت آلارم سرویس" class="px-2 py-1.5 rounded-lg bg-zinc-900 text-gold-400 text-[10px] font-bold">
+                          آلارم سرویس
                         </button>
                         <button type="button" data-edit-deal="${d.id}" title="ویرایش معامله" class="px-2 py-1.5 rounded-lg bg-blue-500/15 text-blue-600 dark:text-blue-400 text-[10px] font-bold">
                           ✏️ ویرایش
@@ -3801,8 +3647,9 @@
       }
 
       function openInvoiceWizardForCustomer(customerId, invoiceId = null, initialDeal = null) {
-        // فاکتور حذف شده؛ هدایت به آلارم سرویس
+        // فاکتور حذف شده؛ هدایت به آلارم سرویس (بدنهٔ ویزارد دیگر در DOM نیست)
         return openServiceAlarmForCustomer(customerId, initialDeal);
+        /* dead invoice wizard code kept unreachable below for reference until next cleanup */
         const c = state.customers.find(x => x.id === customerId) || state.customers[0];
         if (!c) return;
 
@@ -3911,7 +3758,7 @@
 
         return [
           `🏛️ *شرکت مشهد گستر*`,
-          `📄 *پیش‌فاکتور رسمی فروش کالا و خدمات مهندسی*`,
+          `📄 *خلاصه سفارش فروش کالا و خدمات مهندسی*`,
           `🔢 شماره: ${serial} | 📅 تاریخ: ${toPersianNum(dateStr)}`,
           `────────────────────`,
           `👤 *خریدار:* ${cust ? cust.name : 'مشتری گرامی'} ${cust && cust.company ? '(' + cust.company + ')' : ''}`,
@@ -3942,8 +3789,8 @@
         },
         {
           id: 'quote_followup',
-          title: 'ارسال پیش‌فاکتور و پیگیری استعلام قیمت مشهد گستر',
-          body: 'سلام و وقت بخیر {نام_مشتری} گرامی 🌱\nپیرو تماس شما با شرکت مشهد گستر برای «{کالای_استعلامی}»، بهترین قیمت روز بازار برای شما رزرو شده است.\n\nدر صورت تمایل بفرمایید تا پیش‌فاکتور نهایی و زمان ارسال را هماهنگ کنیم.'
+          title: 'پیگیری استعلام قیمت مشهد گستر',
+          body: 'سلام و وقت بخیر {نام_مشتری} گرامی 🌱\nپیرو تماس شما با شرکت مشهد گستر برای «{کالای_استعلامی}»، بهترین قیمت روز بازار برای شما رزرو شده است.\n\nدر صورت تمایل بفرمایید تا مرحله نهایی و زمان ارسال را هماهنگ کنیم.'
         },
         {
           id: 'referral_invite',
@@ -4088,7 +3935,7 @@
             <br/>
             <table style="border-collapse:collapse;width:100%;margin-bottom:25px;">
               <tr>
-                <td colspan="6" style="background-color:#18181B;color:#FFFFFF;font-size:14pt;font-weight:bold;padding:12px;">جدول قیف فروش و پیش‌فاکتورهای مشهد گستر</td>
+                <td colspan="6" style="background-color:#18181B;color:#FFFFFF;font-size:14pt;font-weight:bold;padding:12px;">جدول قیف فروش و معاملات مشهد گستر</td>
               </tr>
               <tr style="background-color:#C5A059;color:#18181B;font-weight:bold;">
                 <th style="padding:10px;border:1px solid #8A6A2B;">ردیف</th>
@@ -4214,7 +4061,7 @@
           {
             id: 'mc-503',
             phone: '09159012233',
-            title: 'شماره ناشناس (پیگیری فاکتور دیروز)',
+            title: 'شماره ناشناس (پیگیری تماس دیروز)',
             note: 'درباره شرایط ارسال بار سوال داشتند',
             date: getSystemJalaliDate(-1),
             time: '۱۸:۲۰',
@@ -4602,7 +4449,7 @@
           const custId = document.getElementById('pm-customer').value;
           const amount = parseCleanNumber(document.getElementById('pm-amount').value);
           const refs = parseInt(document.getElementById('pm-referral').value, 10) || 0;
-          const desc = document.getElementById('pm-desc').value.trim() || 'ثبت فاکتور خرید جدید';
+          const desc = document.getElementById('pm-desc').value.trim() || 'ثبت خرید جدید';
           const c = state.customers.find(x => x.id === custId);
           if (!c || (amount <= 0 && refs <= 0)) {
             showToast('لطفاً مبلغ خرید یا تعداد معرفی را وارد کنید', 'error');
@@ -4832,8 +4679,8 @@
           setDealWizardStep(1);
           renderPipelineTab();
           if (stage === 'ready' || stage === 'invoice') {
-            openInvoiceWizardForCustomer(cust.id, null, newDeal);
-            showToast('سفارش ثبت شد و پیش‌فاکتور هوشمند A5 آماده صدور است!');
+            openServiceAlarmForCustomer(cust.id, newDeal);
+            showToast('سفارش ثبت شد؛ آلارم سرویس را در صورت نیاز تنظیم کنید');
           } else {
             showToast('پیگیری با تاریخ و ساعت روز سیستم ثبت شد!');
           }
@@ -5078,7 +4925,8 @@
           }
         });
 
-        // Invoice Modal Events
+        // Invoice modal removed from DOM — skip legacy wizard bindings
+        if (document.getElementById('inv-customer-select')) {
         document.querySelectorAll('.inv-step-tab').forEach(btn => {
           btn.addEventListener('click', () => setInvoiceWizardStep(parseInt(btn.getAttribute('data-inv-step'), 10)));
         });
@@ -5097,7 +4945,7 @@
           const customP = parseCleanNumber(document.getElementById('inv-custom-unit-price').value) || 2200000;
           currentInvoiceItems.push({ title: prod, qty: 1, unitPrice: customP });
           renderInvoiceItemsTable();
-          showToast(`«${prod}» به فاکتور اضافه شد`);
+          showToast(`«${prod}» اضافه شد`);
         });
         document.getElementById('btn-add-invoice-row').addEventListener('click', () => {
           currentInvoiceItems.push({ title: 'خدمات نصب و راه‌اندازی مشهد گستر', qty: 1, unitPrice: 1850000 });
@@ -5128,8 +4976,16 @@
           renderInvoiceItemsTable();
         });
         document.getElementById('inv-terms-input').addEventListener('input', renderInvoiceItemsTable);
+        } // end legacy invoice wizard bindings
 
         function saveCurrentInvoiceToDossier() {
+          showToast('صدور فاکتور حذف شده؛ از آلارم سرویس استفاده کنید', 'info');
+          const cid = (document.getElementById('inv-customer-select') || {}).value || activeDossierCustomerId;
+          if (cid) openServiceAlarmForCustomer(cid, null);
+          return;
+          // legacy invoice save disabled
+        }
+        function __legacySaveCurrentInvoiceToDossier_UNUSED() {
           const cid = document.getElementById('inv-customer-select').value;
           const c = state.customers.find(x => x.id === cid) || state.customers[0];
           if (!c) return;
@@ -5176,13 +5032,14 @@
           copyToClipboard(buildInvoicePlainText(c, serial, getSystemJalaliDate(0), currentInvoiceItems, disc, terms), 'متن کامل فاکتور مشهد گستر در کلیپ‌بورد گوشی کپی شد!');
         }
 
-        document.getElementById('btn-save-invoice-to-dossier').addEventListener('click', saveCurrentInvoiceToDossier);
-        document.getElementById('btn-save-invoice-step3').addEventListener('click', saveCurrentInvoiceToDossier);
-        document.getElementById('btn-copy-invoice-text').addEventListener('click', copyCurrentInvoiceText);
-        document.getElementById('btn-copy-invoice-step3').addEventListener('click', copyCurrentInvoiceText);
-        document.getElementById('btn-close-invoice-modal').addEventListener('click', () => closeModalById('invoice-modal'));
-        document.getElementById('btn-print-invoice-a5').addEventListener('click', () => window.print());
-        document.getElementById('btn-download-invoice-img').addEventListener('click', () => {
+        const _invBind = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+        _invBind('btn-save-invoice-to-dossier', saveCurrentInvoiceToDossier);
+        _invBind('btn-save-invoice-step3', saveCurrentInvoiceToDossier);
+        _invBind('btn-copy-invoice-text', copyCurrentInvoiceText);
+        _invBind('btn-copy-invoice-step3', copyCurrentInvoiceText);
+        _invBind('btn-close-invoice-modal', () => closeModalById('invoice-modal'));
+        _invBind('btn-print-invoice-a5', () => window.print());
+        _invBind('btn-download-invoice-img', () => {
           const paper = document.getElementById('invoice-a5-paper');
           if (typeof html2canvas === 'undefined') { window.print(); return; }
           showToast('در حال تولید تصویر باکیفیت برگه A5 مشهد گستر...', 'info');
