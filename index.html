@@ -1292,16 +1292,20 @@
         <button type="button" data-msg-date="yesterday" class="msg-date-btn px-2.5 py-1 rounded-xl font-bold bg-cream-200 dark:bg-zinc-800">دیروز</button>
         <label class="inline-flex items-center gap-1 px-2 py-1 rounded-xl bg-cream-100 dark:bg-zinc-900 border border-gold-500/30 font-bold"><span>تاریخ</span><input id="ws-msg-date-pick" type="text" placeholder="1404/08/25" class="w-24 bg-transparent outline-none font-black" /></label>
       </div>
-      <div id="ws-pinned-bar" class="hidden p-2 rounded-xl bg-gold-500/15 border-r-4 border-gold-500 text-xs font-bold"></div>
+      <div id="ws-pinned-bar" class="hidden p-2 rounded-xl bg-gold-500/15 border-r-4 border-gold-500 text-xs font-bold flex items-center justify-between gap-2"></div>
       <div id="ws-msgs" class="flex flex-col gap-2 h-[50vh] overflow-y-auto pr-1"></div>
+      <div id="ws-entity-picker" class="hidden p-2.5 rounded-2xl bg-cream-100 dark:bg-zinc-900 border-2 border-gold-500/50 max-h-48 overflow-y-auto space-y-1 shadow-xl"></div>
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 mt-1">
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-1.5 flex-wrap">
           <label class="px-2.5 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 cursor-pointer text-sm">📎<input id="wc-file" type="file" class="hidden"/></label>
           <button id="wc-mic" class="px-2.5 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-sm">🎤</button>
-          <button id="wc-cl" class="px-2.5 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-sm">☑️</button>
+          <button id="wc-cl" class="px-2.5 py-2 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-sm font-black" title="چک‌لیست">☑️</button>
+          <button type="button" id="btn-wc-refer-dossier" class="px-2.5 py-2 rounded-xl bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 text-[11px] font-black" title="ارجاع پرونده">📂 پرونده</button>
+          <button type="button" id="btn-wc-attach-card" class="px-2.5 py-2 rounded-xl bg-gold-500/20 text-gold-700 dark:text-gold-300 text-[11px] font-black" title="کارت #"># کارت</button>
+          <button type="button" id="btn-wc-mention-user" class="px-2 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-[11px] font-black" title="منشن @">@</button>
         </div>
         <div class="flex items-center gap-1.5 flex-1">
-          <input id="wc-txt" class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-300/80 dark:border-zinc-700 text-xs font-bold" placeholder="پیام..."/>
+          <input id="wc-txt" class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-300/80 dark:border-zinc-700 text-xs font-bold" placeholder="پیام... (@ منشن ، # کارت)"/>
           <button id="wc-send" class="px-4 py-2 rounded-xl gold-gradient text-zinc-950 text-xs font-black shrink-0">ارسال</button>
         </div>
       </div></div></div>
@@ -1580,73 +1584,9 @@
   <!-- ===================================================== -->
   <!-- MODAL 6: MASHHAD GOSTAR LUXURY GLASS A5 INVOICE STUDIO -->
   <!-- ===================================================== -->
-  <div id="invoice-modal" class="app-modal fixed inset-0 z-[150] pointer-events-none opacity-0 bg-black/75 backdrop-blur-md hidden items-center justify-center p-2 sm:p-4 overflow-y-auto">
-    <div class="modal-spring max-w-4xl w-full my-auto space-y-4">
-      <div class="no-print glass-strong rounded-2xl p-4 space-y-3 border border-gold-500/45">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <span class="px-3 py-1 rounded-xl gold-gradient text-zinc-950 text-xs font-black">ویزارد مرحله‌ای فاکتور هوشمند A5 مشهد گستر</span>
-            <span id="inv-edit-status-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">فاکتور جدید</span>
-          </div>
-          <div class="flex flex-wrap items-center gap-1.5">
-            <button type="button" id="btn-save-invoice-to-dossier" class="px-3.5 py-2 rounded-xl emerald-gradient text-white text-xs font-black shadow-md">💾 ذخیره فاکتور در پرونده مشتری</button>
-            <button type="button" id="btn-copy-invoice-text" class="px-3.5 py-2 rounded-xl bg-amber-500 text-zinc-950 text-xs font-black shadow-md">📋 دریافت فاکتور به صورت متن (کپی)</button>
-            <button type="button" id="btn-download-invoice-img" class="px-3.5 py-2 rounded-xl gold-gradient text-zinc-950 text-xs font-black shadow-md">📸 دانلود تصویر پیش‌فاکتور (A5 PNG)</button>
-            <button type="button" id="btn-print-invoice-a5" class="px-3 py-2 rounded-xl bg-zinc-800 text-white text-xs font-bold">🖨️ چاپ روی برگه A5</button>
-            <button type="button" id="btn-close-invoice-modal" class="px-3 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-xs font-bold">بستن</button>
-          </div>
-        </div>
+  <div id="invoice-modal" class="hidden" aria-hidden="true" data-disabled="1"></div>
+  <!-- فاکتور حذف شد — جایگزین: آلارم سرویس -->
 
-        <div class="grid grid-cols-3 gap-2 pt-1">
-          <button type="button" data-inv-step="1" class="inv-step-tab py-2 px-3 rounded-xl text-xs font-black gold-gradient text-zinc-950">گام ۱: انتخاب مشتری و مشخصات</button>
-          <button type="button" data-inv-step="2" class="inv-step-tab py-2 px-3 rounded-xl text-xs font-bold bg-cream-200 dark:bg-zinc-800">گام ۲: افزودن کالا و تغییر قیمت</button>
-          <button type="button" data-inv-step="3" class="inv-step-tab py-2 px-3 rounded-xl text-xs font-bold bg-cream-200 dark:bg-zinc-800">گام ۳: تخفیف و ذخیره نهایی</button>
-        </div>
-
-        <div id="inv-wizard-panel-1" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs pt-1">
-          <div>
-            <label class="font-bold block mb-1">انتخاب مشتری (بارگذاری خودکار پرونده):</label>
-            <select id="inv-customer-select" class="w-full px-3 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35"></select>
-          </div>
-          <div>
-            <label class="font-bold block mb-1">شماره سریال فاکتور:</label>
-            <input id="inv-serial-input" type="text" value="MG-1405-817" class="w-full px-3 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35" />
-          </div>
-          <div class="flex items-end">
-            <button type="button" data-inv-goto="2" class="w-full py-2 rounded-xl gold-gradient text-zinc-950 font-black">مرحله بعد: افزودن کالا و قیمت ⬅</button>
-          </div>
-        </div>
-
-        <div id="inv-wizard-panel-2" class="hidden grid grid-cols-1 sm:grid-cols-4 gap-2.5 text-xs pt-1">
-          <div class="sm:col-span-2">
-            <label class="font-bold block mb-1">انتخاب کالا/خدمات از استودیو قیمت مشهد گستر:</label>
-            <select id="inv-quick-product" class="w-full px-2.5 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35"></select>
-          </div>
-          <div>
-            <label class="font-bold block mb-1">قیمت واحد قابل تغییر (تومان):</label>
-            <input id="inv-custom-unit-price" type="text" placeholder="قیمت واحد..." class="w-full px-2.5 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35" />
-          </div>
-          <div class="flex items-end gap-1.5">
-            <button type="button" id="btn-inv-Quick-add" class="flex-1 py-2 rounded-xl emerald-gradient text-white font-black">+ درج این کالا در فاکتور</button>
-            <button type="button" id="btn-add-invoice-row" class="px-2.5 py-2 rounded-xl bg-zinc-800 text-gold-400 font-bold">+ افزودن ردیف کالا/خدمات</button>
-          </div>
-        </div>
-
-        <div id="inv-wizard-panel-3" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs pt-1">
-          <div>
-            <label class="font-bold block mb-1">تخفیف لحاظ‌شده در پایین برگه (تومان):</label>
-            <input id="inv-discount-input" type="text" value="0" class="w-full px-2.5 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35" />
-          </div>
-          <div>
-            <label class="font-bold block mb-1">شرایط پرداخت و توضیحات پایین برگه:</label>
-            <input id="inv-terms-input" type="text" value="نقدی | اعتبار پیش‌فاکتور: ۲۴ ساعت" class="w-full px-2.5 py-2 rounded-xl bg-cream-100 dark:bg-zinc-900 font-bold border border-gold-500/35" />
-          </div>
-          <div class="flex items-end gap-1.5">
-            <button type="button" id="btn-save-invoice-step3" class="flex-1 py-2 rounded-xl emerald-gradient text-white font-black">💾 ذخیره در پرونده مشتری</button>
-            <button type="button" id="btn-copy-invoice-step3" class="px-3 py-2 rounded-xl bg-amber-500 text-zinc-950 font-black">📋 کپی متن</button>
-          </div>
-        </div>
-      </div>
 
       <!-- A5 LUXURY GLASS INVOICE SHEET -->
       <div id="invoice-a5-paper" class="mx-auto w-full max-w-[560px] rounded-3xl p-6 sm:p-7 text-zinc-900 shadow-2xl relative overflow-hidden" style="background: linear-gradient(145deg, #FDFCFB 0%, #F5F1E6 55%, #EDE6D6 100%); border: 2px solid #C5A059;">
@@ -1839,7 +1779,13 @@
         </div>
         <div>
           <label class="block font-extrabold mb-1.5">رمز عبور (Password):</label>
-          <input id="login-password" type="password" dir="ltr" required value="123456" placeholder="••••••" class="w-full px-4 py-3 rounded-2xl bg-cream-100 dark:bg-zinc-900 border border-gold-500/40 font-black text-left focus:outline-none focus:ring-2 focus:ring-gold-500" />
+          <div class="relative">
+            <input id="login-password" type="password" dir="ltr" required value="123456" placeholder="••••••" class="w-full pl-12 pr-4 py-3 rounded-2xl bg-cream-100 dark:bg-zinc-900 border border-gold-500/40 font-black text-left focus:outline-none focus:ring-2 focus:ring-gold-500" />
+            <button type="button" id="btn-toggle-login-password" onclick="(function(b){var i=document.getElementById('login-password');if(!i)return;var show=(i.getAttribute('type')||i.type)==='password';var n=show?'text':'password';i.setAttribute('type',n);try{i.type=n;}catch(e){}var o=document.getElementById('login-eye-open'),c=document.getElementById('login-eye-closed');if(o)o.classList.toggle('hidden',show);if(c)c.classList.toggle('hidden',!show);})(this);return false;" class="absolute inset-y-0 left-0 z-10 px-3.5 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-gold-600" title="نمایش / مخفی کردن رمز" aria-label="نمایش رمز">
+              <svg id="login-eye-open" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <svg id="login-eye-closed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+            </button>
+          </div>
         </div>
         <div id="login-error-box" class="hidden p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-bold text-center"></div>
         <button type="submit" class="w-full py-3.5 rounded-2xl gold-gradient text-zinc-950 font-black text-sm shadow-xl hover:opacity-95 transition">
@@ -2585,7 +2531,7 @@
         chartFunnel = new Chart(ctxF, {
           type: 'bar',
           data: {
-            labels: ['سرنخ جدید', 'مذاکره', 'پیش‌فاکتور', 'خرید قطعی'],
+            labels: ['سرنخ جدید', 'مذاکره', 'آماده تایید', 'خرید قطعی'],
             datasets: [{
               data: [stageCounts.lead, stageCounts.negotiation, stageCounts.invoice, stageCounts.won],
               backgroundColor: ['#6366F1', '#F59E0B', '#C5A059', '#126E5B'],
@@ -3432,7 +3378,7 @@
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px]">
             <div><span class="text-zinc-400">آخرین رویداد بایگانی:</span> <span class="font-bold">${lastTalk}</span></div>
-            <div><span class="text-zinc-400">پرونده‌های فعال:</span> <span class="font-bold text-gold-600 dark:text-gold-400">${toPersianNum(custDeals.length)} معامله | ${toPersianNum((c.invoices || []).length)} فاکتور</span></div>
+            <div><span class="text-zinc-400">پرونده‌های فعال:</span> <span class="font-bold text-gold-600 dark:text-gold-400">${toPersianNum(custDeals.length)} معامله | ${toPersianNum((state.serviceReminders||[]).filter(s=>!s.deleted&&(s.customerId===c.id||s.phone===c.phone)).length)} آلارم سرویس</span></div>
           </div>
         `;
       }
@@ -4277,7 +4223,7 @@
           const custId = document.getElementById('pm-customer').value;
           const amount = parseCleanNumber(document.getElementById('pm-amount').value);
           const refs = parseInt(document.getElementById('pm-referral').value, 10) || 0;
-          const desc = document.getElementById('pm-desc').value.trim() || 'ثبت فاکتور خرید جدید';
+          const desc = document.getElementById('pm-desc').value.trim() || 'ثبت خرید جدید';
           const c = state.customers.find(x => x.id === custId);
           if (!c || (amount <= 0 && refs <= 0)) {
             showToast('لطفاً مبلغ خرید یا تعداد معرفی را وارد کنید', 'error');
@@ -4508,7 +4454,7 @@
           renderPipelineTab();
           if (stage === 'invoice') {
             openInvoiceWizardForCustomer(cust.id, null, newDeal);
-            showToast('سفارش ثبت شد و پیش‌فاکتور هوشمند A5 آماده صدور است!');
+            showToast('سفارش ثبت شد — در صورت نیاز آلارم سرویس تنظیم کنید');
           } else {
             showToast('پیگیری با تاریخ و ساعت روز سیستم ثبت شد!');
           }
@@ -4752,130 +4698,10 @@
           }
         });
 
-        // Invoice Modal Events
-        document.querySelectorAll('.inv-step-tab').forEach(btn => {
-          btn.addEventListener('click', () => setInvoiceWizardStep(parseInt(btn.getAttribute('data-inv-step'), 10)));
-        });
-        document.querySelectorAll('[data-inv-goto]').forEach(btn => {
-          btn.addEventListener('click', () => setInvoiceWizardStep(parseInt(btn.getAttribute('data-inv-goto'), 10)));
-        });
-        document.getElementById('inv-customer-select').addEventListener('change', e => populateInvoiceCustomerHeader(e.target.value));
-        document.getElementById('inv-serial-input').addEventListener('input', e => { document.getElementById('inv-number').textContent = e.target.value; });
-        document.getElementById('inv-custom-unit-price').addEventListener('input', e => {
-          const n = parseCleanNumber(e.target.value);
-          e.target.value = n ? formatPrice(n) : '';
-        });
+        // Invoice Modal Events — فاکتور حذف شد (DOM و لیسنرها غیرفعال)
+        (function disableInvoiceBindings(){ /* no-op */ })();
 
-        document.getElementById('btn-inv-Quick-add').addEventListener('click', () => {
-          const prod = document.getElementById('inv-quick-product').value;
-          const customP = parseCleanNumber(document.getElementById('inv-custom-unit-price').value) || 2200000;
-          currentInvoiceItems.push({ title: prod, qty: 1, unitPrice: customP });
-          renderInvoiceItemsTable();
-          showToast(`«${prod}» به فاکتور اضافه شد`);
-        });
-        document.getElementById('btn-add-invoice-row').addEventListener('click', () => {
-          currentInvoiceItems.push({ title: 'خدمات نصب و راه‌اندازی مشهد گستر', qty: 1, unitPrice: 1850000 });
-          renderInvoiceItemsTable();
-        });
-
-        document.getElementById('inv-items-tbody').addEventListener('input', e => {
-          const inp = e.target;
-          const idx = parseInt(inp.getAttribute('data-inv-idx'), 10);
-          const field = inp.getAttribute('data-inv-field');
-          if (isNaN(idx) || !currentInvoiceItems[idx]) return;
-          if (field === 'title') currentInvoiceItems[idx].title = inp.value;
-          if (field === 'qty') currentInvoiceItems[idx].qty = Math.max(1, parseInt(inp.value, 10) || 1);
-          if (field === 'price') currentInvoiceItems[idx].unitPrice = parseCleanNumber(inp.value);
-          renderInvoiceItemsTable();
-        });
-        document.getElementById('inv-items-tbody').addEventListener('click', e => {
-          const del = e.target.closest('[data-inv-del]');
-          if (del) {
-            currentInvoiceItems.splice(parseInt(del.getAttribute('data-inv-del'), 10), 1);
-            renderInvoiceItemsTable();
-          }
-        });
-
-        document.getElementById('inv-discount-input').addEventListener('input', e => {
-          const n = parseCleanNumber(e.target.value);
-          e.target.value = n ? formatPrice(n) : '0';
-          renderInvoiceItemsTable();
-        });
-        document.getElementById('inv-terms-input').addEventListener('input', renderInvoiceItemsTable);
-
-        function saveCurrentInvoiceToDossier() {
-          const cid = document.getElementById('inv-customer-select').value;
-          const c = state.customers.find(x => x.id === cid) || state.customers[0];
-          if (!c) return;
-          c.invoices = c.invoices || [];
-          const serial = document.getElementById('inv-serial-input').value.trim() || 'MG-1405-900';
-          const disc = parseCleanNumber(document.getElementById('inv-discount-input').value);
-          const terms = document.getElementById('inv-terms-input').value.trim();
-          const sub = currentInvoiceItems.reduce((s, it) => s + (it.qty || 1) * (it.unitPrice || 0), 0);
-          const grand = Math.max(0, sub - disc);
-          const sysToday = getSystemJalaliDate(0);
-
-          const invRecord = {
-            id: activeEditingInvoiceId || ('inv-' + Date.now()),
-            serial,
-            date: sysToday,
-            customerId: c.id,
-            customerName: c.name,
-            items: JSON.parse(JSON.stringify(currentInvoiceItems)),
-            discount: disc,
-            terms
-          };
-
-          if (activeEditingInvoiceId) {
-            const idx = c.invoices.findIndex(i => i.id === activeEditingInvoiceId);
-            if (idx !== -1) c.invoices[idx] = invRecord;
-            c.timeline.unshift({ date: getSystemTimestamp(), text: `✏️ ویرایش فاکتور شماره ${serial} به مبلغ خالص ${formatPrice(grand)} تومان` });
-          } else {
-            c.invoices.unshift(invRecord);
-            activeEditingInvoiceId = invRecord.id;
-            c.timeline.unshift({ date: getSystemTimestamp(), text: `🧾 صدور و ذخیره فاکتور شماره ${serial} در بایگانی به مبلغ ${formatPrice(grand)} تومان` });
-          }
-
-          saveState();
-          if (state.activeTab === 'club') renderClubTab();
-          showToast(`فاکتور ${serial} با تاریخ امروز سیستم در بایگانی «${c.name}» ذخیره شد!`);
-        }
-
-        function copyCurrentInvoiceText() {
-          const cid = document.getElementById('inv-customer-select').value;
-          const c = state.customers.find(x => x.id === cid) || state.customers[0];
-          const serial = document.getElementById('inv-serial-input').value.trim() || 'MG-1405-817';
-          const disc = parseCleanNumber(document.getElementById('inv-discount-input').value);
-          const terms = document.getElementById('inv-terms-input').value.trim();
-          copyToClipboard(buildInvoicePlainText(c, serial, getSystemJalaliDate(0), currentInvoiceItems, disc, terms), 'متن کامل فاکتور مشهد گستر در کلیپ‌بورد گوشی کپی شد!');
-        }
-
-        document.getElementById('btn-save-invoice-to-dossier').addEventListener('click', saveCurrentInvoiceToDossier);
-        document.getElementById('btn-save-invoice-step3').addEventListener('click', saveCurrentInvoiceToDossier);
-        document.getElementById('btn-copy-invoice-text').addEventListener('click', copyCurrentInvoiceText);
-        document.getElementById('btn-copy-invoice-step3').addEventListener('click', copyCurrentInvoiceText);
-        document.getElementById('btn-close-invoice-modal').addEventListener('click', () => closeModalById('invoice-modal'));
-        document.getElementById('btn-print-invoice-a5').addEventListener('click', () => window.print());
-        document.getElementById('btn-download-invoice-img').addEventListener('click', () => {
-          const paper = document.getElementById('invoice-a5-paper');
-          if (typeof html2canvas === 'undefined') { window.print(); return; }
-          showToast('در حال تولید تصویر باکیفیت برگه A5 مشهد گستر...', 'info');
-          html2canvas(paper, { scale: 2, useCORS: true, backgroundColor: '#F5F1E6' }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `Factor_MashhadGostar_${toEnglishDigits(getSystemJalaliDate(0)).replace(/\//g, '-')}.png`;
-            link.href = canvas.toDataURL('image/png');
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            showToast('تصویر پیش‌آلارم سرویس مشهد گستر دانلود شد!');
-          }).catch(() => showToast('خطا در تولید تصویر؛ از دکمه چاپ A5 استفاده کنید', 'error'));
-        });
-
-        // Price Studio Controls & Quick Edit Modal
-        document.querySelectorAll('.ps-sub-btn').forEach(btn => {
-          btn.addEventListener('click', () => switchPsSubTab(btn.getAttribute('data-ps-sub')));
-        });
-        document.getElementById('ps-card-search').addEventListener('input', renderPriceStudioCard);
+document.getElementById('ps-card-search').addEventListener('input', renderPriceStudioCard);
         document.getElementById('btn-ps-card-clear').addEventListener('click', () => {
           document.getElementById('ps-card-search').value = '';
           renderPriceStudioCard();
@@ -5507,6 +5333,7 @@
                 if (Array.isArray(p.deals) && p.deals.length > 0) state.deals = p.deals;
                 if (Array.isArray(p.quotes) && p.quotes.length > 0) state.quotes = p.quotes;
                 if (Array.isArray(p.missedCalls)) state.missedCalls = p.missedCalls;
+                if (Array.isArray(p.serviceReminders)) state.serviceReminders = p.serviceReminders;
                 if (Array.isArray(p.canceledDeals)) state.canceledDeals = p.canceledDeals;
                 if (Array.isArray(p.categories) && p.categories.length > 0) state.categories = p.categories;
                 if (Array.isArray(p.allScenarios) && p.allScenarios.length > 0) state.allScenarios = p.allScenarios;
@@ -5549,6 +5376,31 @@
           document.getElementById('login-username').value = 'sales1';
           document.getElementById('login-password').value = '123456';
         });
+
+        
+        (function bindLoginEye(){
+          const btnEye = document.getElementById('btn-toggle-login-password');
+          if (!btnEye || btnEye.dataset.bound === '1') return;
+          btnEye.dataset.bound = '1';
+          const syncIcons = (showing) => {
+            const open = document.getElementById('login-eye-open');
+            const closed = document.getElementById('login-eye-closed');
+            if (open) open.classList.toggle('hidden', showing);
+            if (closed) closed.classList.toggle('hidden', !showing);
+          };
+          const toggle = (ev) => {
+            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+            const inp = document.getElementById('login-password');
+            if (!inp) return;
+            const show = (inp.getAttribute('type') || inp.type) === 'password';
+            const next = show ? 'text' : 'password';
+            inp.setAttribute('type', next);
+            try { inp.type = next; } catch (e) {}
+            syncIcons(show);
+          };
+          btnEye.addEventListener('click', toggle);
+          btnEye.addEventListener('mousedown', (ev) => ev.preventDefault());
+        })();
 
         document.getElementById('auth-login-form').addEventListener('submit', e => {
           e.preventDefault();
@@ -5911,23 +5763,35 @@ function clH(m){const mineTo=m.to===me(),all=m.items.every(i=>i.d);let b='';
  return `<div class="space-y-1 text-xs"><b>☑️ چک‌لیست (${esc(nm(m.from))} ← ${esc(nm(m.to))})</b>${m.items.map((i,x)=>`<label class="flex items-center gap-2"><input type="checkbox" data-ci="${m.id}:${x}" ${i.d?'checked':''} ${m.st==='acc'&&mineTo?'':'disabled'} class="accent-amber-500"><span class="${i.d?'line-through opacity-60':''}">${esc(i.t)}</span></label>`).join('')}<div class="text-[11px] font-bold text-gold-700 dark:text-gold-300">${lab}</div><div class="flex gap-1.5">${b}</div></div>`}
 // ===== chat
 function msgH(m){const mine=m.from===me();let c='';
- if(m.type==='text')c=`<span class="whitespace-pre-wrap">${esc(m.txt)}</span>`;
+ if(m.type==='text'){const raw=esc(m.txt||'');c=`<span class="whitespace-pre-wrap">${raw.replace(/@([^\s]+)/g,'<span class="text-indigo-600 dark:text-indigo-400 font-black">@$1</span>')}</span>`}
  else if(m.gone)c='<i class="opacity-60">(رسانه قدیمی حذف شد)</i>';
  else if(m.type==='img')c=`<img src="${m.data}" class="rounded-xl max-h-60">`;
  else if(m.type==='voice')c=`<audio controls src="${m.data}" class="max-w-full h-9"></audio>`;
  else if(m.type==='file')c=`<a href="${m.data}" download="${esc(m.name)}" class="underline font-black">📎 ${esc(m.name)}</a>`;
  else if(m.type==='cl')c=clH(m);
- else if(m.type==='ref')c=`<b>📌 ارجاع مشتری</b><div>${esc(m.cust)} ${esc(m.phone||'')}</div><div class="whitespace-pre-wrap">${esc(m.txt)}</div>`;
- return `<div class="max-w-[85%] ${mine?'self-end bg-gold-500/25':'self-start bg-zinc-200/70 dark:bg-zinc-800'} rounded-2xl px-3 py-2 text-xs">${!mine&&cur==='all'?`<div class="text-[10px] font-black opacity-70">${esc(nm(m.from))}</div>`:''}${c}<div class="text-[9px] opacity-50 mt-1">${tm(m.t)}</div></div>`}
+ else if(m.type==='card'){
+   if(m.cardType==='customer'){const cust=state.customers.find(x=>x.id===m.entityId);c=`<div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30"><b>👤 کارت پرونده</b><div class="font-black">${esc(cust?cust.name:(m.title||'مشتری'))}</div>${cust?`<div class="text-[11px] opacity-70" dir="ltr">${esc(cust.phone||'')}</div><button type="button" data-open-dossier="${cust.id}" class="mt-1 px-2 py-1 rounded-lg bg-zinc-900 text-gold-400 text-[10px] font-black">باز کردن پرونده</button>`:''}</div>`}
+   else if(m.cardType==='quote'){const q=state.quotes.find(x=>x.id===m.entityId);c=`<div class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30"><b>🏷️ کارت قیمت</b><div class="font-black">${esc(q?q.productName:(m.title||'قیمت'))}</div>${q?`<div class="text-[11px]">${formatPrice(q.price)} تومان</div>`:''}</div>`}
+   else c=`<b># کارت</b>`}
+ }
+ else if(m.type==='ref'){c=`<b>📌 ارجاع پرونده</b><div class="font-black">${esc(m.cust)} ${esc(m.phone||'')}</div><div class="whitespace-pre-wrap">${esc(m.txt)}</div>`;
+  if(!mine&&m.refStatus!=='acc'&&(m.to===me()||!m.to))c+=`<button type="button" data-accept-ref="${m.id}" class="mt-1.5 px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[10px] font-black">قبول ارجاع</button>`;
+  if(m.refStatus==='acc')c+=`<div class="text-[10px] text-emerald-600 font-black mt-1">✓ قبول‌شده توسط ${esc(nm(m.acceptedBy||''))}</div>`}
+ let ticks='';
+ if(mine){const peerName=cur==='all'?null:peer(cur);const peerReadTs=peerName&&WS.readBy[cur]?WS.readBy[cur][peerName]||0:0;const isRead=cur==='all'?(now()-m.t>4000):(peerReadTs>=m.t);ticks=`<span class="mr-1 font-black ${isRead?'text-emerald-600':'opacity-50'}" title="${isRead?'خوانده شده':'ارسال شده'}">${isRead?'✓✓':'✓'}</span>`}
+ return `<div id="msg-row-${m.id}" class="max-w-[85%] ${mine?'self-end bg-gold-500/25':'self-start bg-zinc-200/70 dark:bg-zinc-800'} rounded-2xl px-3 py-2 text-xs"><div class="flex items-center justify-between gap-2 mb-0.5">${!mine||cur==='all'?`<div class="text-[10px] font-black opacity-70">${esc(nm(m.from))}</div>`:'<span></span>'}<div class="flex gap-1"><button type="button" data-msg-pin="${m.id}" class="px-1 rounded text-[10px] opacity-70 hover:opacity-100" title="پین">📌</button></div></div>${c}<div class="text-[9px] opacity-50 mt-1 flex justify-end items-center">${tm(m.t)}${ticks}</div></div>`}
 function rC(){const box=g('ws-msgs'),L=g('ws-convs');
  L.innerHTML=convs().map(c=>{const last=WS.msgs.filter(m=>!m.del&&m.c===c).sort((a,b)=>b.t-a.t)[0],u=un(c),p=c==='all'?'all':peer(c);
   return `<button data-cv="${c}" class="w-full flex items-center gap-2 p-2 rounded-2xl text-right ${c===cur?'bg-gold-500/20':'hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}">${c==='all'?'<span class="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center">👥</span>':av(p)}<span class="flex-1 min-w-0"><b class="text-xs block">${c==='all'?'گروه همه':esc(nm(p))}</b><span class="text-[10px] opacity-60 truncate block">${last?esc(last.type==='text'?last.txt:'['+last.type+']'):''}</span></span>${u?`<b class="px-1.5 rounded-full bg-rose-600 text-white text-[10px]">${u}</b>`:''}</button>`}).join('');
  g('ws-room-h').textContent=cur==='all'?'گروه همه':nm(peer(cur));
+ const pinBar=g('ws-pinned-bar');const pinId=WS.pins&&WS.pins[cur];const pinMsg=pinId?WS.msgs.find(m=>!m.del&&m.id===pinId):null;
+ if(pinBar){if(pinMsg){pinBar.classList.remove('hidden');pinBar.innerHTML=`<div class="truncate flex-1 cursor-pointer" data-jump-msg="${pinMsg.id}"><strong class="text-gold-700 dark:text-gold-300 text-[10px]">📌 پین از ${esc(nm(pinMsg.from))}:</strong> <span class="font-bold">${esc(pinMsg.txt||pinMsg.cust||'پیام')}</span></div><button type="button" id="btn-ws-unpin" class="text-rose-500 font-black px-2">×</button>`}else pinBar.classList.add('hidden')}
  const stick=box.scrollHeight-box.scrollTop-box.clientHeight<80||box.dataset.c!==cur;
- const _mdf=m=>{const mode=window.__msgDateFilter||'all';if(mode==='all')return 1;const d=new Date(m.t||m.u||0);if(isNaN(d))return 1;const sod=x=>{const y=new Date(x);y.setHours(0,0,0,0);return y.getTime()};const today=sod(new Date());if(mode==='today')return sod(d)===today;if(mode==='yesterday')return sod(d)===today-86400000;if(mode==='pick'){const raw=toEnglishDigits((g('ws-msg-date-pick')||{}).value||'').trim();if(!raw)return 1;return String(m.jDate||m.date||'').includes(raw)||1;}return 1;};
+ const _mdf=m=>{const mode=window.__msgDateFilter||'all';if(mode==='all')return 1;const d=new Date(m.t||m.u||0);if(isNaN(d))return 1;const sod=x=>{const y=new Date(x);y.setHours(0,0,0,0);return y.getTime()};const today=sod(new Date());if(mode==='today')return sod(d)===today;if(mode==='yesterday')return sod(d)===today-86400000;if(mode==='pick'){const raw=toEnglishDigits((g('ws-msg-date-pick')||{}).value||'').trim();if(!raw)return 1;try{return sod(d)===sod(new Date())}catch(e){return String(m.jDate||'').includes(raw)}}return 1;};
  box.innerHTML=WS.msgs.filter(m=>!m.del&&m.c===cur&&_mdf(m)).sort((a,b)=>a.t-b.t).slice(-150).map(msgH).join('')||'<p class="text-xs text-zinc-500 m-auto">پیامی نیست</p>';
  box.dataset.c=cur;if(stick)box.scrollTop=box.scrollHeight;
- R[cur]=now();try{localStorage.setItem(K+'r',JSON.stringify(R))}catch(e){}badge()}
+ R[cur]=now();WS.readBy=WS.readBy||{};WS.readBy[cur]=WS.readBy[cur]||{};WS.readBy[cur][me()]=now();
+ try{localStorage.setItem(K+'r',JSON.stringify(R))}catch(e){}badge()}
 function send(o){WS.msgs.push(Object.assign({id:uid('m'),c:cur,from:me(),t:now(),u:now()},o));save();rC()}
 async function mic(btn){if(rec){rec.stop();return}
  try{const s=await navigator.mediaDevices.getUserMedia({audio:true}),mt=['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t)),ch=[];
@@ -5945,8 +5809,8 @@ function rP(){const m=me(),p=WS.profiles[m]||{},done=WS.tasks.filter(t=>!t.del&&
 function prof(o){WS.profiles[me()]=Object.assign({},WS.profiles[me()],o,{u:now()});save();rP()}
 // ===== referral
 window.wsRefer=function(i){modal('ارجاع به همکار',`<div class="text-xs font-black">${esc(i.cust)} ${esc(i.phone||'')}</div><select id="rf-to" class="${IN}">${peers()}</select><textarea id="rf-n" rows="3" class="${IN}" placeholder="توضیح: همکار چه کاری انجام دهد؟"></textarea>`,d=>{const to=d.querySelector('#rf-to').value,n=d.querySelector('#rf-n').value.trim();if(!to||!n){showToast('همکار و توضیح لازم است','info');return false}
- const c=dmk(me(),to);WS.msgs.push({id:uid('m'),c,from:me(),t:now(),u:now(),type:'ref',cust:i.cust,phone:i.phone,txt:n});
- const tid=uid('t');WS.tasks.push({id:tid,title:'پیگیری مشتری: '+i.cust,note:n+(i.phone?'\nتلفن: '+i.phone:''),from:me(),to,due:getSystemJalaliDate(0),pri:2,st:'n',t:now(),u:now()});WS.msgs[WS.msgs.length-1].taskId=tid;save();showToast('ارجاع شد و در گپ و کارهای همکار ثبت شد');render();try{if(typeof renderRadarTab==='function')renderRadarTab()}catch(e){}})};
+ const c=dmk(me(),to);const mid=uid('m');WS.msgs.push({id:mid,c,from:me(),to,t:now(),u:now(),type:'ref',cust:i.cust,phone:i.phone,txt:n,customerId:i.customerId||'',refStatus:'p'});
+ const tid=uid('t');WS.tasks.push({id:tid,refMsgId:mid,title:'پیگیری مشتری: '+i.cust,note:n+(i.phone?'\nتلفن: '+i.phone:''),from:me(),to,due:getSystemJalaliDate(0),pri:2,st:'n',t:now(),u:now(),customerId:i.customerId||''});WS.msgs.find(m=>m.id===mid).taskId=tid;save();showToast('ارجاع شد و در گپ و کارهای همکار ثبت شد');render();try{if(typeof renderRadarTab==='function')renderRadarTab()}catch(e){}})};
 // ===== categories
 const D=p=>p.split(SEP).length-1,last=p=>p.split(SEP).pop(),pre=(p,x)=>x===p||x.startsWith(p+SEP);
 function anc(){const s=new Set(state.categories);state.categories.forEach(p=>{const a=p.split(SEP);for(let i=1;i<a.length;i++)s.add(a.slice(0,i).join(SEP))});state.categories=[...s].sort((a,b)=>a.localeCompare(b,'fa'))}
@@ -5983,9 +5847,16 @@ const _rm=renderMissedCallsBook;renderMissedCallsBook=function(){_rm.apply(this,
 const _rq=renderPriceQuotesList;renderPriceQuotesList=function(){refF();_rq.apply(this,arguments)};
 // ===== wiring
 function render(){if(!g('ws-t')||!me())return;badge();document.querySelectorAll('[data-ws-sub]').forEach(b=>{const a=b.dataset.wsSub===sub;b.classList.toggle('gold-gradient',a);b.classList.toggle('text-zinc-950',a)});document.querySelectorAll('.ws-pane').forEach(p=>p.classList.toggle('hidden',p.id!=='ws-'+sub));if(state.activeTab!=='work')return;({t:rT,c:rC,p:rP})[sub]()}
+
+function showEntityPicker(mode){const box=g('ws-entity-picker');if(!box)return;box.classList.remove('hidden');
+ if(mode==='@'){box.innerHTML=`<div class="flex justify-between text-[11px] font-black pb-1"><span>@ منشن همکار</span><button type="button" data-close-picker="1" class="text-rose-500">×</button></div>`+US().map(u=>`<button type="button" data-pick-mention="@${esc(u.displayName)} " class="w-full text-right p-1.5 rounded-xl hover:bg-gold-500/20 text-xs font-bold">${esc(u.displayName)}</button>`).join('')}
+ else{const custRows=state.customers.slice(0,15).map(c=>`<button type="button" data-pick-card="customer:${esc(c.id)}" class="w-full text-right p-1.5 rounded-xl hover:bg-indigo-500/20 text-xs font-bold">👤 ${esc(c.name)}</button>`).join('');
+  const quoteRows=state.quotes.slice(0,15).map(q=>`<button type="button" data-pick-card="quote:${esc(q.id)}" class="w-full text-right p-1.5 rounded-xl hover:bg-emerald-500/20 text-xs font-bold">🏷️ ${esc(q.productName)} — ${formatPrice(q.price)}</button>`).join('');
+  box.innerHTML=`<div class="flex justify-between text-[11px] font-black pb-1"><span># کارت پرونده / قیمت</span><button type="button" data-close-picker="1" class="text-rose-500">×</button></div>${custRows}${quoteRows}`}}
+
 window.wsRenderWork=render;window.wsData=()=>WS;
 window.wsOnUser=function(){if(!g('ws-t'))return;g('ws-who').textContent=me()?'👤 '+nm(me()):'';g('wt-to').innerHTML=`<option value="${esc(me())}">خودم</option>`+peers();if(cur!=='all'&&!convs().includes(cur))cur='all';badge()};
-window.wsMerge=function(o){const b=tot();WS.tasks=mg(WS.tasks,o.tasks);WS.msgs=mg(WS.msgs,o.msgs);Object.keys(o.profiles||{}).forEach(k=>{if(!WS.profiles[k]||(o.profiles[k].u||0)>(WS.profiles[k].u||0))WS.profiles[k]=o.profiles[k]});try{localStorage.setItem(K,JSON.stringify(WS))}catch(e){}
+window.wsMerge=function(o){const b=tot();WS.tasks=mg(WS.tasks,o.tasks);WS.msgs=mg(WS.msgs,o.msgs);WS.pins=Object.assign({},WS.pins||{},o.pins||{});WS.readBy=Object.assign({},WS.readBy||{},o.readBy||{});Object.keys(o.profiles||{}).forEach(k=>{if(!WS.profiles[k]||(o.profiles[k].u||0)>(WS.profiles[k].u||0))WS.profiles[k]=o.profiles[k]});try{localStorage.setItem(K,JSON.stringify(WS))}catch(e){}
  if(me()&&tot()>b&&!(state.activeTab==='work'&&sub==='c')){
    showToast('پیام جدید دارید 💬','info');
    // Browser Notification for mobile/desktop
@@ -6007,10 +5878,21 @@ window.wsInit=function(){if(ready)return;ready=1;
    Notification.requestPermission();
  }
  const T=g('view-work');
- T.addEventListener('click',e=>{const x=e.target.closest('button,[data-ws-sub]');if(!x)return;
+ T.addEventListener('click',e=>{const x=e.target.closest('button,[data-ws-sub],[data-jump-msg],[data-open-dossier]');if(!x)return;
   if(x.dataset.wsSub){sub=x.dataset.wsSub;return render()}
   if(x.dataset.cv){cur=x.dataset.cv;return rC()}
-  if(x.dataset.tk){const[i,a]=x.dataset.tk.split(':'),t=WS.tasks.find(y=>y.id===i);if(!t)return;if(a==='x')t.del=1;else t.st=a;t.u=now();save();return rT()}
+  if(x.id==='btn-ws-unpin'){delete WS.pins[cur];save();return rC()}
+  if(x.dataset.jumpMsg){const row=g('msg-row-'+x.dataset.jumpMsg);if(row){row.scrollIntoView({behavior:'smooth',block:'center'});row.classList.add('ring-2','ring-gold-500');setTimeout(()=>row.classList.remove('ring-2','ring-gold-500'),1500)}return}
+  if(x.dataset.msgPin){WS.pins=WS.pins||{};WS.pins[cur]=x.dataset.msgPin;save();rC();showToast('پیام پین شد 📌');return}
+  if(x.dataset.acceptRef){const m=WS.msgs.find(y=>y.id===x.dataset.acceptRef);if(!m)return;m.refStatus='acc';m.acceptedBy=me();m.u=now();let lt=WS.tasks.find(t=>t.id===m.taskId||t.refMsgId===m.id);if(lt){lt.st='d';lt.to=me();lt.u=now()}else{WS.tasks.push({id:uid('t'),refMsgId:m.id,title:'پرونده ارجاعی: '+m.cust,note:m.txt||'',phone:m.phone||'',from:m.from,to:me(),due:getSystemJalaliDate(0),pri:2,st:'d',t:now(),u:now()})}save();showToast('ارجاع قبول شد');render();try{renderRadarTab()}catch(e){}return}
+  if(x.id==='btn-wc-mention-user')return showEntityPicker('@');
+  if(x.id==='btn-wc-attach-card')return showEntityPicker('#');
+  if(x.id==='btn-wc-refer-dossier'){const first=state.customers[0]||{};return wsRefer({cust:first.name||'',phone:first.phone||'',customerId:first.id||''})}
+  if(x.dataset.closePicker){g('ws-entity-picker')&&g('ws-entity-picker').classList.add('hidden');return}
+  if(x.dataset.pickMention){const inp=g('wc-txt');if(inp){inp.value=(inp.value+' '+x.dataset.pickMention).trimStart();inp.focus()}g('ws-entity-picker').classList.add('hidden');return}
+  if(x.dataset.pickCard){const[cType,cId]=x.dataset.pickCard.split(':');g('ws-entity-picker').classList.add('hidden');send({type:'card',cardType:cType,entityId:cId,title:cType});return}
+  if(x.dataset.openDossier&&typeof openCustomerDossierModal==='function'){try{openCustomerDossierModal(x.dataset.openDossier)}catch(e){}return}
+  if(x.dataset.tk){const[i,a]=x.dataset.tk.split(':'),t=WS.tasks.find(y=>y.id===i);if(!t)return;const isRef=t.from&&t.to&&t.from!==t.to;if(a==='k'&&isRef&&t.to===me()&&t.from!==me()&&!isAdm()){showToast('تایید نهایی فقط توسط ارجاع‌دهنده','info');return}if(a==='x')t.del=1;else t.st=a;t.u=now();if(t.refMsgId){const rm=WS.msgs.find(m=>m.id===t.refMsgId);if(rm){rm.refStatus=a;rm.u=now()}}save();try{renderRadarTab()}catch(e){}return rT()}
   if(x.dataset.cl){const[i,a]=x.dataset.cl.split(':'),m=WS.msgs.find(y=>y.id===i);if(!m)return;
    if(a==='r')return modal('دلیل رد',`<input id="rr" class="${IN}">`,d=>{m.st='rej';m.rsn=d.querySelector('#rr').value||'—';m.u=now();save();render()});
    m.st=a==='a'?'acc':'ok';m.u=now();save();return render()}
