@@ -1,11 +1,10 @@
 {
   "name": "mashhad-gostar-crm",
   "private": true,
-  "version": "8.1.0",
-  "description": "سامانه CRM مشهد گستر — همگام‌سازی چندکاربره، میز کار، گپ و آلارم سرویس",
+  "version": "8.2.0",
+  "description": "سامانه CRM مشهد گستر",
   "scripts": {
-    "start": "node server.js",
-    "check": "node scripts/smoke-check.js"
+    "start": "node server.js"
   },
   "engines": {
     "node": ">=16.0.0"
